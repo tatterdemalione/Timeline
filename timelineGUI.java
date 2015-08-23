@@ -6,11 +6,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-
-
 public class timelineGUI extends javax.swing.JFrame {
 
-    private String eventYear;
     private String currentTitle;
     private String currentInfoBox;
     
@@ -34,6 +31,8 @@ public class timelineGUI extends javax.swing.JFrame {
         lengthPrompt.setVisible(false);
         lengthField.setVisible(false);
         submitButton.setVisible(false);
+        yearChoiceNew.setVisible(false);
+        errMsg.setVisible(false);
         
         Timeline.setVisible(false);
         Edit.setVisible(false);
@@ -83,6 +82,8 @@ public class timelineGUI extends javax.swing.JFrame {
         YearLabel = new javax.swing.JLabel();
         Publish = new javax.swing.JButton();
         yearChoice = new javax.swing.JButton();
+        yearChoiceNew = new javax.swing.JButton();
+        errMsg = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -191,6 +192,17 @@ public class timelineGUI extends javax.swing.JFrame {
             }
         });
 
+        yearChoiceNew.setText("C.E.");
+        yearChoiceNew.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                yearChoiceNewActionPerformed(evt);
+            }
+        });
+
+        errMsg.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        errMsg.setForeground(new java.awt.Color(255, 0, 0));
+        errMsg.setText("* The timeline must be at least 1 year in length AND less than 1 million");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -214,14 +226,6 @@ public class timelineGUI extends javax.swing.JFrame {
                         .addGap(25, 25, 25)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(Search, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(yearChoice))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(TitleLabel)
-                                .addGap(73, 73, 73)
-                                .addComponent(YearLabel))
-                            .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(Edit)
@@ -232,7 +236,15 @@ public class timelineGUI extends javax.swing.JFrame {
                                     .addComponent(Title, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(frame, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 539, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 539, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(Search, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(yearChoice))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(TitleLabel)
+                                .addGap(73, 73, 73)
+                                .addComponent(YearLabel))))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(titleText))
@@ -240,15 +252,22 @@ public class timelineGUI extends javax.swing.JFrame {
                         .addGap(62, 62, 62)
                         .addComponent(endYearPrompt)
                         .addGap(25, 25, 25)
-                        .addComponent(endYearField, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(endYearField, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(yearChoiceNew))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(159, 159, 159)
                         .addComponent(lengthPrompt)
                         .addGap(25, 25, 25)
-                        .addComponent(lengthField, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(submitButton)))
-                .addContainerGap(18, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(errMsg))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lengthField, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(submitButton)))))
+                .addContainerGap(45, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -266,7 +285,8 @@ public class timelineGUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(endYearField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(endYearPrompt))
+                    .addComponent(endYearPrompt)
+                    .addComponent(yearChoiceNew))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lengthField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -275,7 +295,8 @@ public class timelineGUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(YearLabel)
-                    .addComponent(TitleLabel))
+                    .addComponent(TitleLabel)
+                    .addComponent(errMsg))
                 .addGap(9, 9, 9)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(Search, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -294,12 +315,13 @@ public class timelineGUI extends javax.swing.JFrame {
                             .addComponent(Publish)
                             .addComponent(editPhoto)))
                     .addComponent(jScrollPane1))
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap(12, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>                        
 
+    
     private void SearchActionPerformed(java.awt.event.ActionEvent evt) {                                       
                 
         int input = Integer.parseInt(Search.getText());
@@ -327,6 +349,12 @@ public class timelineGUI extends javax.swing.JFrame {
         lengthPrompt.setVisible(false);
         lengthField.setVisible(false);
         submitButton.setVisible(false);
+        yearChoiceNew.setVisible(false);
+        openButton.setVisible(false);
+        newButton.setVisible(false);
+        errMsg.setVisible(false);
+        
+
         buildNewTimeline();
         
     }                                            
@@ -354,6 +382,7 @@ public class timelineGUI extends javax.swing.JFrame {
         System.out.println(Title.isEditable());
         
         Timeline.setEnabled(false); //disable the user from being able to use the slider until the editing has been published
+        Search.setEditable(false);
         editPhoto.setVisible(false);
         Publish.setVisible(true); //make the publish button visible
         
@@ -387,7 +416,9 @@ public class timelineGUI extends javax.swing.JFrame {
                 PrintWriter shovel = new PrintWriter(file);
                 shovel.println(Timeline.getValue());
                 shovel.println(Title.getText());
+                timelineArr[Timeline.getValue()].setTitle(Title.getText());
                 shovel.println(infoBox.getText());
+                timelineArr[Timeline.getValue()].setInfo(infoBox.getText());
                 shovel.println("null");
                 shovel.close();
             }
@@ -407,6 +438,7 @@ public class timelineGUI extends javax.swing.JFrame {
         infoBox.setEditable(false); //set the textAreas to be uneditable
         Title.setEditable(false);
         Timeline.setEnabled(true); // enable the JSlider
+        Search.setEditable(true);
         editPhoto.setVisible(true);
     }                                       
 
@@ -415,7 +447,7 @@ public class timelineGUI extends javax.swing.JFrame {
     }                                         
 
     private void TimelineStateChanged(javax.swing.event.ChangeEvent evt) {                                      
-         int value=Timeline.getValue();
+        int value=Timeline.getValue();
         YearLabel.setText(timelineArr[value].getYear());
         if( (timelineArr[value].getInfo() !=null) || (timelineArr[value].getTitle() !=null) || (timelineArr[value].getImage() !=null) ) {
             Event e = timelineArr[value]; // Find the corresponding event from the event array
@@ -442,13 +474,26 @@ public class timelineGUI extends javax.swing.JFrame {
         System.out.println("timeline name: " + timelineName);
         endYearPrompt.setVisible(true);
         endYearField.setVisible(true);
+        yearChoiceNew.setVisible(true);
+        
     }                                         
 
     private void lengthFieldActionPerformed(java.awt.event.ActionEvent evt) {                                            
-        
+        try{
         arrLength = Integer.parseInt(lengthField.getText());
+        } catch(NumberFormatException e){
+            errMsg.setVisible(true);
+        }
         System.out.println("arrLength: " + arrLength);
-        submitButton.setVisible(true);
+        //As long as the Timeline specified will be less than a million years long AND bigger than 0 allow the user to create the timeline
+        if(arrLength>0 && arrLength<=1000000){
+            errMsg.setVisible(false);
+            submitButton.setVisible(true);
+        }
+        else{
+           errMsg.setVisible(true);
+        }
+        
     }                                           
 
     private void yearChoiceActionPerformed(java.awt.event.ActionEvent evt) {                                           
@@ -457,6 +502,13 @@ public class timelineGUI extends javax.swing.JFrame {
         else
             yearChoice.setText("C.E.");
     }                                          
+
+    private void yearChoiceNewActionPerformed(java.awt.event.ActionEvent evt) {                                              
+        if(yearChoiceNew.getText().equals("C.E."))
+            yearChoiceNew.setText("B.C.E.");
+        else
+            yearChoiceNew.setText("C.E.");  
+    }                                             
 /*********************************************************************************************************************************************************************/
     
     
@@ -653,7 +705,7 @@ public class timelineGUI extends javax.swing.JFrame {
     
     public void setEventGui(String year, String title,String info, BufferedImage img)
     {
-            this.eventYear = year;
+            YearLabel.setText(year);
             if(img != null) //if the image is not null
             {// Make a JLabel that will contain an ImageIcon object.  The ImageIcon object takes a Buffered Image as parameters
                if(img.getWidth()>400 || img.getHeight()>400)
@@ -715,10 +767,11 @@ public class timelineGUI extends javax.swing.JFrame {
     
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
      *  Build an already existing timeline by reading information from the proper timeline file    *
-     *  and creating an array containing the information                                       *
+     *  and creating an array containing the information                                           *
      * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
     private void buildTimeline(){
+        
         
         int yearSet;
         JFileChooser fileChooser = new JFileChooser();
@@ -739,7 +792,7 @@ public class timelineGUI extends javax.swing.JFrame {
             File parentDir = new File ("Timelines");
             timelineFile = new File(parentDir, timelineName);
         }
-
+        
         try
         { 
             BufferedReader in = new BufferedReader( new FileReader(timelineFile) ); //make a BufferedReader class that reads from the desired Timeline file
@@ -752,38 +805,51 @@ public class timelineGUI extends javax.swing.JFrame {
             System.out.println(timelineArr.length);
             System.out.println("endYear "+endYear);
             
-            //SET the year variables in the array
-            if((endYear - arrLength) < 0){
-                yearSet = 0;
-                //Starting from the point in the array where the year 0 would be found move up through the array modifying the year attributes of each event object
-                System.out.println("where year 0 is: " + (arrLength - endYear));
-                for(int i = (arrLength - endYear); i <= arrLength; i++){
-                    Event e = new Event(yearSet + " C.E.",null,null,null,i);
-                    timelineArr[i] = e;
-                    //System.out.println(timelineArr[i].getYear());
-                    yearSet++;
-                }
-                //Starting from the point in the array where the year 1 would be found move down through the array modifying the year attributes of each event object
-                yearSet = 1;
-                for (int i=(arrLength - endYear)-1; i >= 0; i--){
-                    Event e = new Event(yearSet + " B.C.E.",null,null,null,i);
-                    timelineArr[i] = e;
-                    //System.out.println(timelineArr[i].getYear());
-                    yearSet++;
-                }
+            //If the timeline specified ends before year 0.  
+            if(yearChoiceNew.getText().equals("B.C.E")){
+                yearSet = endYear;
+                for(int i = arrLength;i>=0;i--){
+                    Event e = new Event(yearSet + " B.C.E",null,null,null,i);
+                    timelineArr[i]=e;
+                    yearSet--;
+                }  
             }
-            //ELSE if the timeline specified does not extend before year 0
             else{
-                yearSet = endYear - arrLength;
-                System.out.println(yearSet);
-                for (int i=0; i <= arrLength; i++){
-                    Event e = new Event(yearSet + " C.E.",null,null,null,i);
-                    timelineArr[i] = e;
-                    //System.out.println(timelineArr[i].getYear());
-                    yearSet++;
+        
+                //SET the year variables in the array
+                if((endYear - arrLength) < 0){
+                    yearSet = 0;
+                    //Starting from the point in the array where the year 0 would be found move up through the array modifying the year attributes of each event object
+                    System.out.println("where year 0 is: " + (arrLength - endYear));
+                    for(int i = (arrLength - endYear); i <= arrLength; i++){
+                        Event e = new Event(yearSet + " C.E.",null,null,null,i);
+                        timelineArr[i] = e;
+                        //System.out.println(timelineArr[i].getYear());
+                        yearSet++;
+                    }
+                    //Starting from the point in the array where the year 1 would be found move down through the array modifying the year attributes of each event object
+                    yearSet = 1;
+                    for (int i=(arrLength - endYear)-1; i >= 0; i--){
+                        Event e = new Event(yearSet + " B.C.E.",null,null,null,i);
+                        timelineArr[i] = e;
+                        //System.out.println(timelineArr[i].getYear());
+                        yearSet++;
+                    }
+                }
+                //ELSE if the timeline specified does not extend before year 0
+                else{
+                    yearSet = endYear - arrLength;
+                    System.out.println(yearSet);
+                    for (int i=0; i <= arrLength; i++){
+                        Event e = new Event(yearSet + " C.E.",null,null,null,i);
+                        timelineArr[i] = e;
+                        //System.out.println(timelineArr[i].getYear());
+                        yearSet++;
+                    }
                 }
             }
-            
+            newButton.setVisible(false);
+            openButton.setVisible(false);
             //READ data from the file to fill the array
             while(in.ready()) //While there are still lines in the file
             {
@@ -805,6 +871,10 @@ public class timelineGUI extends javax.swing.JFrame {
                 timelineArr[index] = newEvent; //put the event in the timeline array
             }
             buildSlider();
+        }
+        catch(NullPointerException e)
+        {
+           System.err.println("No file was selected");
         }
         catch(FileNotFoundException e)
         {
@@ -828,8 +898,7 @@ public class timelineGUI extends javax.swing.JFrame {
     private void buildNewTimeline()
     {
         int yearSet;
-        Event[] timeline = new Event[arrLength+1]; //make an Event array of the specified length
-        System.out.println(timeline.length);
+        Event[] timeline = new Event[arrLength+1];
         final File timelinesDir = new File("./Timelines"); //used to decide whether there is a Timelines directory 
         final File timelineFile;
         String filename;
@@ -840,8 +909,6 @@ public class timelineGUI extends javax.swing.JFrame {
             parentDir.mkdir(); //actually make the directory
             filename = timelineName + ".txt";
             timelineFile = new File(parentDir, filename);
-            
-    
         }
         
         
@@ -884,43 +951,56 @@ public class timelineGUI extends javax.swing.JFrame {
                 // readLine() method might throw this exception
                 System.err.println("Error: something bad happened reading" + timelineFile +", the file may be corrupt.  Editing the file independently of this program may cause problems" ); 
             } 
-        //IF the timeline specified does extend before year 0
-        //System.out.println("endYear - arrLength:" + (endYear - arrLength));
-        if((endYear - arrLength) < 0){
-            yearSet = 0;
-            //Starting from the point in the array where the year 0 would be found move up through the array modifying the year attributes of each event object
-            for(int i = (arrLength - endYear); i <= arrLength; i++){
-                Event e = new Event(yearSet + " C.E.",null,null,null,i);
-                timeline[i] = e;
-                //System.out.println(timeline[i].getYear());
-                yearSet++;
-            }
-            //Starting from the point in the array where the year 1 would be found move down through the array modifying the year attributes of each event object
-            yearSet = 1;
-            for (int i=(arrLength - endYear)-1; i >= 0; i--){
-                Event e = new Event(yearSet + " B.C.E.",null,null,null,i);
-                timeline[i] = e;
-                //System.out.println(timeline[i].getYear());
-                yearSet++;
-            }
-        }
-        //ELSE if the timeline specified does not extend before year 0
-        else{
-            yearSet = endYear - arrLength;
-            //System.out.println(yearSet);
-            for (int i=0; i <= arrLength; i++){
-                Event e = new Event(yearSet + " C.E.",null,null,null,i);
-                timeline[i] = e;
-                //System.out.println(timeline[i].getYear());
-                yearSet++;
-            }
-        }
-            buildSlider();
         
+        //If the timeline specified ends before year 0.
+        if(yearChoiceNew.getText().equals("B.C.E.")){
+            yearSet = endYear;
+            for(int i = arrLength;i>=0;i--){
+                Event e = new Event(yearSet + " B.C.E",null,null,null,i);
+                timeline[i]=e;
+                yearSet++;
+            }  
+        }
+        else{
+        
+            //IF the timeline specified does extend before year 0
+            if((endYear - arrLength) < 0){
+                yearSet = 0;
+                //Starting from the point in the array where the year 0 would be found move up through the array modifying the year attributes of each event object
+                for(int i = (arrLength - endYear); i <= arrLength; i++){
+                    Event e = new Event(yearSet + " C.E.",null,null,null,i);
+                    timeline[i] = e;
+                    //System.out.println(timeline[i].getYear());
+                    yearSet++;
+                }
+                //Starting from the point in the array where the year 1 would be found move down through the array modifying the year attributes of each event object
+                yearSet = 1;
+                for (int i=(arrLength - endYear)-1; i >= 0; i--){
+                    Event e = new Event(yearSet + " B.C.E.",null,null,null,i);
+                    timeline[i] = e;
+                    //System.out.println(timeline[i].getYear());
+                    yearSet++;
+                }
+            }
+
+            //ELSE if the timeline specified does not extend before year 0
+            else{
+                yearSet = endYear - arrLength;
+                //System.out.println(yearSet);
+                for (int i=0; i <= arrLength; i++){
+                    Event e = new Event(yearSet + " C.E.",null,null,null,i);
+                    timeline[i] = e;
+                    //System.out.println(timeline[i].getYear());
+                    yearSet++;
+                }
+            }
+        }
+        timelineArr = timeline;
+        buildSlider();   
     }
     
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
-     *                                                                                             * 
+     *                                                                                              * 
      *                                                                                             *
      *                                                                                             * 
      * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -963,6 +1043,7 @@ public class timelineGUI extends javax.swing.JFrame {
     private javax.swing.JButton editPhoto;
     private javax.swing.JTextField endYearField;
     private javax.swing.JLabel endYearPrompt;
+    private javax.swing.JLabel errMsg;
     private javax.swing.JLabel frame;
     private javax.swing.JTextArea infoBox;
     private javax.swing.JScrollPane jScrollPane1;
@@ -975,6 +1056,7 @@ public class timelineGUI extends javax.swing.JFrame {
     private javax.swing.JButton submitButton;
     private javax.swing.JLabel titleText;
     private javax.swing.JButton yearChoice;
+    private javax.swing.JButton yearChoiceNew;
     // End of variables declaration                   
 }
 
