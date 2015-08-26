@@ -1,3 +1,5 @@
+package Timeline
+
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -5,7 +7,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import ./Event.java
+
 
 public class timelineGUI extends javax.swing.JFrame {
 
