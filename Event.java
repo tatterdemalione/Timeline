@@ -1,5 +1,3 @@
-
-
 package Timeline;
 
 import java.awt.image.BufferedImage;
