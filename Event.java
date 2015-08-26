@@ -1,6 +1,6 @@
 
 
-package timeline2;
+package Timeline;
 
 import java.awt.image.BufferedImage;
 
