@@ -522,6 +522,8 @@ public class timelineGUI extends javax.swing.JFrame {
     private void editPhoto()
     {
         JFileChooser fileChooser = new JFileChooser();
+        File currentDIR = new File("Timelines");
+        fileChooser.setCurrentDirectory(currentDIR);
         fileChooser.setDialogTitle("Choose an image");
         FileNameExtensionFilter filter = new FileNameExtensionFilter("jpg, gif and png images", "jpg", "gif", "png");
         fileChooser.setFileFilter(filter); //set the file filter to only search for png, jpg and gif images.
@@ -778,6 +780,8 @@ public class timelineGUI extends javax.swing.JFrame {
         
         int yearSet;
         JFileChooser fileChooser = new JFileChooser();
+        File currentDIR = new File("Timelines");
+        fileChooser.setCurrentDirectory(currentDIR);
         fileChooser.setDialogTitle("Choose a timeline");
         FileNameExtensionFilter filter = new FileNameExtensionFilter("timeline files", "txt");
         fileChooser.setFileFilter(filter); //set the file filter to only search for png, jpg and gif images.
