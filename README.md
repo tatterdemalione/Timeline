@@ -9,7 +9,8 @@ Planned Updates:
 
 ## Bugs:
 
-Can't copy and paste into the JtextFields or JTextAreas
+- Can't copy and paste into the JtextFields or JTextAreas
+- If edit photo is clicked first before an event has been created, it will fail...
 
 ## To Build:
 
