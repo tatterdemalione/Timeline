@@ -9,6 +9,7 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 
+
 public class timelineGUI extends javax.swing.JFrame {
 
     private String currentTitle;
@@ -392,8 +393,9 @@ public class timelineGUI extends javax.swing.JFrame {
     }                                    
 
     private void PublishActionPerformed(java.awt.event.ActionEvent evt) {                                        
-
-        if(!currentInfoBox.equals("") && !currentTitle.equals(""))
+        
+        //if any of the features are not null
+        if(!currentInfoBox.equals("") || !currentTitle.equals("") || timelineArr[Timeline.getValue()].getImage() != null)
         {
             System.out.println("Editing an existing event...");
 
@@ -446,6 +448,7 @@ public class timelineGUI extends javax.swing.JFrame {
     }                                       
 
     private void editPhotoActionPerformed(java.awt.event.ActionEvent evt) {                                          
+        
         editPhoto();
     }                                         
 
@@ -520,15 +523,23 @@ public class timelineGUI extends javax.swing.JFrame {
     
 /*********************************************************************************************************************************************************************/
     private void editPhoto()
+            
     {
+        //Make a photo directory for the timeline if one has not already been created.  
+        File photoDir = new File("Timelines/"+timelineName+".resources");
+        if(!photoDir.exists()) //if there is no resources directory for this timeline
+        { 
+            System.out.println("create a new resources directory for: "+timelineName);
+            photoDir.mkdir(); //actually make the directory
+        }
+        
         JFileChooser fileChooser = new JFileChooser();
-        File currentDIR = new File("Timelines");
-        fileChooser.setCurrentDirectory(currentDIR);
         fileChooser.setDialogTitle("Choose an image");
         FileNameExtensionFilter filter = new FileNameExtensionFilter("jpg, gif and png images", "jpg", "gif", "png");
         fileChooser.setFileFilter(filter); //set the file filter to only search for png, jpg and gif images.
         this.getContentPane().add(fileChooser);
         fileChooser.setVisible(true);
+        
         
         BufferedImage img=null;
         String imgName=null;
@@ -538,8 +549,12 @@ public class timelineGUI extends javax.swing.JFrame {
                 
                 if(ret == fileChooser.APPROVE_OPTION) //if the button has been clicked, get the selected file
                 {
-                    img = ImageIO.read(fileChooser.getSelectedFile());
+                    img = ImageIO.read(fileChooser.getSelectedFile()); //read the image
                     imgName = fileChooser.getName(fileChooser.getSelectedFile());
+                    System.out.println(img);
+                    //write the image to the resources folder
+                    File writeImg = new File (photoDir+"/"+imgName);
+                    ImageIO.write(img,"jpg",writeImg); //write the image to the photo directory 
                 }
         }
         catch (IOException e) 
@@ -564,35 +579,53 @@ public class timelineGUI extends javax.swing.JFrame {
         String currentLine="love";
         try
         {
-            File tmp = File.createTempFile("tmp",".txt"); //make a temporary file
-            BufferedReader br = new BufferedReader(new FileReader(timelineFile)); 
-            BufferedWriter bw = new BufferedWriter(new FileWriter(tmp));
-
-            while(!(currentLine.equals( Integer.toString( Timeline.getValue() ) ) ) )
-            { //while the line does not have the current event's index
-                currentLine = br.readLine();
-                bw.write(currentLine+"\n"); //write the current line to the temp file
+            //If the event does not yet exist
+            if((timelineArr[Timeline.getValue()].getInfo() ==null) || (timelineArr[Timeline.getValue()].getTitle() ==null) || (timelineArr[Timeline.getValue()].getImage() ==null))
+            {
+                System.out.println("Creating new event...");
+                FileWriter file = new FileWriter(timelineFile,true); //Make a new FileWriter with append = true so that new events will be appended instead of overwriting existing data
+                PrintWriter shovel = new PrintWriter(file);
+                shovel.println(Timeline.getValue());
+                shovel.println("");
+                shovel.println("");
+                shovel.println(imgName);
+                timelineArr[Timeline.getValue()].setImage(img); //write the image dynamically into the timeline array
+                shovel.close();
             }
             
-            bw.write(br.readLine()+"\n"); //write the title
-            bw.write(br.readLine()+"\n"); //write the info
-            br.readLine(); //skip over the line with the photo
-            
-            bw.write(imgName + "\n"); //write the image name to the temp file
-            
-            timelineArr[Timeline.getValue()].setImage(img);
+            //Else if the event does already exist
+            else
+            {
+                File tmp = File.createTempFile("tmp",".txt"); //make a temporary file
+                BufferedReader br = new BufferedReader(new FileReader(timelineFile)); 
+                BufferedWriter bw = new BufferedWriter(new FileWriter(tmp));
 
-             while ((currentLine = br.readLine()) != null) //read everthing after the title and write it to the temp file
-             {
-              bw.write(currentLine+"\n");
-             }
+                while(!(currentLine.equals( Integer.toString( Timeline.getValue() ) ) ) )
+                { //while the line does not have the current event's index
+                    currentLine = br.readLine();
+                    bw.write(currentLine+"\n"); //write the current line to the temp file
+                }
 
-             bw.close(); //close the files
-             br.close();
+                bw.write(br.readLine()+"\n"); //write the title
+                bw.write(br.readLine()+"\n"); //write the info
+                br.readLine(); //skip over the line with the photo
 
-            File oldFile = timelineFile; //make a copy of the old file
-            if (oldFile.delete()) //delete the file, if successful rename the tmp file and make it the usable file
-                tmp.renameTo(oldFile);
+                bw.write(imgName + "\n"); //write the image name to the temp file
+
+                timelineArr[Timeline.getValue()].setImage(img);
+
+                 while ((currentLine = br.readLine()) != null) //read everything after the title and write it to the temp file
+                 {
+                  bw.write(currentLine+"\n");
+                 }
+
+                 bw.close(); //close the files
+                 br.close();
+
+                File oldFile = timelineFile; //make a copy of the old file
+                if (oldFile.delete()) //delete the file, if successful rename the tmp file and make it the usable file
+                    tmp.renameTo(oldFile);
+            }
         }
         catch(FileNotFoundException e)
         {
@@ -604,7 +637,6 @@ public class timelineGUI extends javax.swing.JFrame {
             // readLine() method might throw this exception
             System.err.println("Error: something bad happened reading" + timelineFile +", the file may be corrupt.  Editing the file independently of this program may cause problems" ); 
         }  
-
     }
     
     private void editTitle()
@@ -869,7 +901,7 @@ public class timelineGUI extends javax.swing.JFrame {
                 BufferedImage img = null;
                 try 
                 {
-                   img = ImageIO.read(new File("Timelines/"+stringImg)); //try to create a new image
+                   img = ImageIO.read(new File("Timelines/"+timelineName+".resources/"+stringImg)); //try to create a new image
                 }
                 catch (IOException e) {System.err.println("The image "+stringImg+" could not be found");}
 
