@@ -1,4 +1,4 @@
-package Timeline;
+package timeline;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -526,7 +526,8 @@ public class timelineGUI extends javax.swing.JFrame {
             
     {
         //Make a photo directory for the timeline if one has not already been created.  
-        File photoDir = new File("Timelines/"+timelineName+".resources");
+        System.out.println(timelineName);
+        File photoDir = new File("Timelines/"+timelineName+".txt.resources");
         if(!photoDir.exists()) //if there is no resources directory for this timeline
         { 
             System.out.println("create a new resources directory for: "+timelineName);
@@ -575,7 +576,7 @@ public class timelineGUI extends javax.swing.JFrame {
             }
         
         File parentDir = new File ("Timelines");
-        File timelineFile = new File(parentDir, timelineName); //find the file to be written to
+        File timelineFile = new File(parentDir, timelineName+".txt"); //find the file to be written to
         String currentLine="love";
         try
         {
@@ -643,7 +644,7 @@ public class timelineGUI extends javax.swing.JFrame {
     {
         System.out.println("Editing title");     
         File parentDir = new File ("Timelines");
-        File timelineFile = new File(parentDir, timelineName); //find the file to be written to
+        File timelineFile = new File(parentDir, timelineName + ".txt"); //find the file to be written to
         String currentLine="love";
         try
         {
@@ -690,7 +691,7 @@ public class timelineGUI extends javax.swing.JFrame {
     {
         System.out.println("Editing event information");
         File parentDir = new File ("Timelines");
-        File timelineFile = new File(parentDir,timelineName); //find the file to be written to
+        File timelineFile = new File(parentDir,timelineName +".txt"); //find the file to be written to
         String currentLine="love";
         try
         {
@@ -754,7 +755,6 @@ public class timelineGUI extends javax.swing.JFrame {
                 frame.setIcon(new ImageIcon(img));
                }
             }
-            
             infoBox.setText(info); 
             Title.setText(title);
     }
@@ -968,7 +968,8 @@ public class timelineGUI extends javax.swing.JFrame {
                 System.err.println("An I/O error occured, please try again");
             }
             
-            try{
+            try
+            {
                 File tmp = File.createTempFile("tmp",".txt"); //make a temporary file
                 BufferedWriter bw = new BufferedWriter(new FileWriter(tmp));
                 bw.write(Integer.toString(arrLength)+"\n");
@@ -977,7 +978,7 @@ public class timelineGUI extends javax.swing.JFrame {
                         
                 File oldFile = timelineFile; //make a copy of the old file
                 if (oldFile.delete()) //delete the file, if successful rename the tmp file and make it the usable file
-                tmp.renameTo(oldFile);
+                    tmp.renameTo(oldFile);
                 
             }
             catch(FileNotFoundException e)
@@ -1009,7 +1010,6 @@ public class timelineGUI extends javax.swing.JFrame {
                 for(int i = (arrLength - endYear); i <= arrLength; i++){
                     Event e = new Event(yearSet + " C.E.",null,null,null,i);
                     timeline[i] = e;
-                    //System.out.println(timeline[i].getYear());
                     yearSet++;
                 }
                 //Starting from the point in the array where the year 1 would be found move down through the array modifying the year attributes of each event object
@@ -1017,7 +1017,6 @@ public class timelineGUI extends javax.swing.JFrame {
                 for (int i=(arrLength - endYear)-1; i >= 0; i--){
                     Event e = new Event(yearSet + " B.C.E.",null,null,null,i);
                     timeline[i] = e;
-                    //System.out.println(timeline[i].getYear());
                     yearSet++;
                 }
             }
@@ -1025,11 +1024,9 @@ public class timelineGUI extends javax.swing.JFrame {
             //ELSE if the timeline specified does not extend before year 0
             else{
                 yearSet = endYear - arrLength;
-                //System.out.println(yearSet);
                 for (int i=0; i <= arrLength; i++){
                     Event e = new Event(yearSet + " C.E.",null,null,null,i);
                     timeline[i] = e;
-                    //System.out.println(timeline[i].getYear());
                     yearSet++;
                 }
             }
