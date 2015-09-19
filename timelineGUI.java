@@ -414,7 +414,7 @@ public class timelineGUI extends javax.swing.JFrame {
         {
             System.out.println("Creating new event...");
             File parentDir = new File ("Timelines");
-            File timelineFile = new File(parentDir, timelineName + ".txt"); //find the file to be written to
+            File timelineFile = new File(parentDir, timelineName+".txt"); //find the file to be written to
             try
             {
                 FileWriter file = new FileWriter(timelineFile,true); //Make a new FileWriter with append = true so that new events will be appended instead of overwriting existing data
@@ -581,7 +581,7 @@ public class timelineGUI extends javax.swing.JFrame {
         try
         {
             //If the event does not yet exist
-            if((timelineArr[Timeline.getValue()].getInfo() ==null) || (timelineArr[Timeline.getValue()].getTitle() ==null) || (timelineArr[Timeline.getValue()].getImage() ==null))
+            if((timelineArr[Timeline.getValue()].getInfo() == null) || (timelineArr[Timeline.getValue()].getTitle() == null) || (timelineArr[Timeline.getValue()].getImage() == null))
             {
                 System.out.println("Creating new event...");
                 FileWriter file = new FileWriter(timelineFile,true); //Make a new FileWriter with append = true so that new events will be appended instead of overwriting existing data
@@ -600,6 +600,9 @@ public class timelineGUI extends javax.swing.JFrame {
                 File tmp = File.createTempFile("tmp",".txt"); //make a temporary file
                 BufferedReader br = new BufferedReader(new FileReader(timelineFile)); 
                 BufferedWriter bw = new BufferedWriter(new FileWriter(tmp));
+                
+                bw.write(br.readLine()+"\n"); 
+                //read the first line and write it to the temp file, in case by chance the year we want to edit is the length of the timeline
 
                 while(!(currentLine.equals( Integer.toString( Timeline.getValue() ) ) ) )
                 { //while the line does not have the current event's index
@@ -651,7 +654,12 @@ public class timelineGUI extends javax.swing.JFrame {
             File tmp = File.createTempFile("tmp",".txt"); //make a temporary file
             BufferedReader br = new BufferedReader(new FileReader(timelineFile));  //make a reader for the current file
             BufferedWriter bw = new BufferedWriter(new FileWriter(tmp)); //make a writer for the tmp file
-
+            
+            
+            bw.write(br.readLine()+"\n"); 
+            //read the first line and write it to the temp file, in case by chance the year we want to edit is the length of the timeline
+            
+            
             while(!(currentLine.equals( Integer.toString( Timeline.getValue() ) ) ) )
             { //while the line does not have the current event's index
                 currentLine = br.readLine();
