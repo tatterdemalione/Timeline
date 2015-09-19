@@ -10,7 +10,7 @@ Planned Updates:
 ## Bugs:
 - Can't copy and paste into the JtextFields or JTextAreas
 - Large photos get cropped in an ugly fashion, instead of reduced in size...
-- 
+
 ## To Build:
 
     git clone https://github.com/tatterdemalione/Timeline.git
