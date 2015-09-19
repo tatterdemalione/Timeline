@@ -13,7 +13,7 @@ Planned Updates:
 
     git clone https://github.com/tatterdemalione/Timeline.git
     cd Timeline
-    javac *.class
+    javac *.java
 
 ## To Test:
 
@@ -21,5 +21,6 @@ Planned Updates:
     java Timeline.timelineGUI
 
 --------
+Warning: Do not edit any of the files in the Timelines folder outside of the application because it easy to break things.
 
 
