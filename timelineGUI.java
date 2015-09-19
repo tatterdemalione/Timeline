@@ -414,7 +414,7 @@ public class timelineGUI extends javax.swing.JFrame {
         {
             System.out.println("Creating new event...");
             File parentDir = new File ("Timelines");
-            File timelineFile = new File(parentDir, timelineName); //find the file to be written to
+            File timelineFile = new File(parentDir, timelineName + ".txt"); //find the file to be written to
             try
             {
                 FileWriter file = new FileWriter(timelineFile,true); //Make a new FileWriter with append = true so that new events will be appended instead of overwriting existing data
