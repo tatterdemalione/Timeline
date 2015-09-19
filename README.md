@@ -6,8 +6,11 @@ A Java GUI application for building an interactive history timeline.  I have com
 Planned Updates: 
 - Provide functionality for multiple events in each year.  Using an array of linked lists containing events and maybe a JTabbedPane interface?
 - Put a logo on the main screen
+- Add information for build in Windows
+- Add .jar build instructions for Mac and Windows
 
 ## Bugs:
+- If the final node of timeline is edited, the program gets confused and overwrites parts of the file because it sees the length of the array, on the first line, as the index.
 - Can't copy and paste into the JtextFields or JTextAreas
 - Large photos get cropped in an ugly fashion, instead of reduced in size...
 
