@@ -1,4 +1,4 @@
-package timeline;
+package Timeline;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
