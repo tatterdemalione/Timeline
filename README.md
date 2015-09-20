@@ -8,9 +8,9 @@ Planned Updates:
 - Put a logo on the main screen
 - Add information for build in Windows
 - Add .jar build instructions for Mac and Windows
+- Add a backup feature
 
 ## Bugs:
-- If the final node of timeline is edited, the program gets confused and overwrites parts of the file because it sees the length of the array, on the first line, as the index.
 - Can't copy and paste into the JtextFields or JTextAreas
 - Large photos get cropped in an ugly fashion, instead of reduced in size...
 
@@ -26,6 +26,6 @@ Planned Updates:
     java Timeline.timelineGUI
 
 --------
-Warning: Do not edit any of the files in the Timelines folder outside of the application because it easy to break things.
+Warning: Do not edit any of the files in the Timelines folder outside of the application because it is easy to break things.
 
 
