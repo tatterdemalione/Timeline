@@ -459,6 +459,10 @@ public class timelineGUI extends javax.swing.JFrame {
             Event e = timelineArr[value]; // Find the corresponding event from the event array
             setEventGui(e.getYear(),e.getTitle(),e.getInfo(),e.getImage()); //set the components of the GUI appropriately
             System.out.println("Loading Event... \""+ e.getTitle()+"\"");
+            if(e.getImage()==null){
+                frame.setIcon(null);
+            }
+            
             //System.out.println("Year: " + e.getYear() + "\n" + "Title: " + e.getTitle() + "\n" + "Info: " + e.getInfo() + "\n" + "Image: " + e.getImage());
         }
         else{
@@ -527,7 +531,7 @@ public class timelineGUI extends javax.swing.JFrame {
     {
         //Make a photo directory for the timeline if one has not already been created.  
         System.out.println(timelineName);
-        File photoDir = new File("Timelines/"+timelineName+".txt.resources");
+        File photoDir = new File("Timelines/"+timelineName+".resources");
         if(!photoDir.exists()) //if there is no resources directory for this timeline
         { 
             System.out.println("create a new resources directory for: "+timelineName);
@@ -581,7 +585,7 @@ public class timelineGUI extends javax.swing.JFrame {
         try
         {
             //If the event does not yet exist
-            if((timelineArr[Timeline.getValue()].getInfo() == null) || (timelineArr[Timeline.getValue()].getTitle() == null) || (timelineArr[Timeline.getValue()].getImage() == null))
+            if((timelineArr[Timeline.getValue()].getInfo() == null) && (timelineArr[Timeline.getValue()].getTitle() == null) && (timelineArr[Timeline.getValue()].getImage() == null))
             {
                 System.out.println("Creating new event...");
                 FileWriter file = new FileWriter(timelineFile,true); //Make a new FileWriter with append = true so that new events will be appended instead of overwriting existing data
@@ -618,7 +622,7 @@ public class timelineGUI extends javax.swing.JFrame {
 
                 timelineArr[Timeline.getValue()].setImage(img);
 
-                 while ((currentLine = br.readLine()) != null) //read everything after the title and write it to the temp file
+                 while ((currentLine = br.readLine()) != null) //read everything after the where the photo was saved and write it to the temp file
                  {
                   bw.write(currentLine+"\n");
                  }
@@ -828,16 +832,17 @@ public class timelineGUI extends javax.swing.JFrame {
         this.getContentPane().add(fileChooser);
         fileChooser.setVisible(true);
         
-        //System.out.println("Which timeline would you like to open?");
-        int ret = fileChooser.showDialog(null, "Open"); //creates a custom file chooser dialog with a custom "Attach Image" button
+
+        int ret = fileChooser.showDialog(null, "Open"); //creates a custom file chooser dialog with a custom "Open" button
         File timelineFile = null;
         
         if(ret == fileChooser.APPROVE_OPTION) //if the button has been clicked, get the selected file
         {
-            timelineName = fileChooser.getName(fileChooser.getSelectedFile());
+            String tempName = fileChooser.getName(fileChooser.getSelectedFile());
+            timelineName = tempName.substring(0,( tempName.length()-4) ); //remove the .txt portion of the name
             System.out.println(timelineName);
             File parentDir = new File ("Timelines");
-            timelineFile = new File(parentDir, timelineName);
+            timelineFile = new File(parentDir, timelineName+".txt");
         }
         
         try
