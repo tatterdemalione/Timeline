@@ -26,6 +26,10 @@ Planned Updates:
     java Timeline.timelineGUI
 
 --------
+## OR
+    sh build.sh  #creates a jar folder that can be executed directly
+--------    
+
 Warning: Do not edit any of the files in the Timelines folder outside of the application because it is easy to break things.
 
 
