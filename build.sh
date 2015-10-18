@@ -21,6 +21,11 @@ fi
 
 #All good lets go.
 
+#Create Timeline folder and copy source files into it
+mkdir Timeline
+cp *.java Timeline
+rm *.java
+
 #Compile..
 javac Timeline/*.java
 if [ $? == 1 ]; then
