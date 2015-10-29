@@ -6,7 +6,6 @@ A Java GUI application for building an interactive history timeline.  This appli
 Planned Updates: 
 - Provide functionality for multiple events in each year.  Using an array of linked lists containing events and maybe a JTabbedPane interface?
 - Put a logo on the main screen
-- Add information for build in Windows
 - Add .jar build instructions for Mac and Windows
 - Add a backup feature
 
