@@ -15,7 +15,9 @@ Planned Updates:
 
 ## Install (Mac): 
     Move into the directory you want save the file in using terminal
-    git clone https://github.com/tatterdemalione/Timeline.git
+        <b>cd path\to\file\</b>
+    Copy the file from Github
+        git clone https://github.com/tatterdemalione/Timeline.git
     sh build.sh  #creates a jar folder that can be executed directly
     double click the .jar file to run the app
 --------    
