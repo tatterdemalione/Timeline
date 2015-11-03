@@ -13,14 +13,12 @@ Planned Updates:
 - Can't copy and paste into the JtextFields or JTextAreas
 - Large photos get cropped in an ugly fashion, instead of reduced in size...
 
--## To Build: 
+## To Build: 
 -    Move into the directory you want save the file in using terminal
 -    git clone https://github.com/tatterdemalione/Timeline.git
 -    cd Timeline
 -    javac *.java
--    
--## To Test:
--
+## To Test:
 -    cd ..			# To move out of the Timeline Folder
 -    java Timeline.timelineGUI
 --------    
