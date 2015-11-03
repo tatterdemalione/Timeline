@@ -13,14 +13,16 @@ Planned Updates:
 - Can't copy and paste into the JtextFields or JTextAreas
 - Large photos get cropped in an ugly fashion, instead of reduced in size...
 
-## Install (Mac): 
-    Move into the directory you want save the file in using terminal
-    Copy the file from Github
-        git clone https://github.com/tatterdemalione/Timeline.git
-    Move into the Timeline directory and run the build shell script to create a .jar file
-        cd Timeline
-        sh build.sh  #creates a jar folder that can be executed directly
-    Run the resulting Timeline.jar file to use the app
+-## To Build: 
+-    Move into the directory you want save the file in using terminal
+-    git clone https://github.com/tatterdemalione/Timeline.git
+-    cd Timeline
+-    javac *.java
+-    
+-## To Test:
+-
+-    cd ..			# To move out of the Timeline Folder
+-    java Timeline.timelineGUI
 --------    
 
 Warning: Do not edit any of the files in the Timelines folder outside of the application because it is easy to break things.
