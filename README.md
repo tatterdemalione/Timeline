@@ -18,6 +18,7 @@ Planned Updates:
 -    git clone https://github.com/tatterdemalione/Timeline.git
 -    cd Timeline
 -    javac *.java
+
 ## To Test:
 -    cd ..			# To move out of the Timeline Folder
 -    java Timeline.timelineGUI
