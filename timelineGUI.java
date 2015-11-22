@@ -14,7 +14,7 @@
   *  You should have received a copy of the GNU General Public License
   *  along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
   **********************************************************************************************************************************************************************/
-package timeline2;
+package timeline;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -38,7 +38,6 @@ public class timelineGUI extends javax.swing.JFrame {
     Event tail;
     int currentYear;
     
-    Event[] timelineArr;
     
     /**
      * Creates new form timelineGUI
