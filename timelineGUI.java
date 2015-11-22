@@ -14,7 +14,7 @@
   *  You should have received a copy of the GNU General Public License
   *  along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
   **********************************************************************************************************************************************************************/
-package Timeline;
+package timeline2;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -34,6 +34,9 @@ public class timelineGUI extends javax.swing.JFrame {
     int endYear;
     int arrLength;
     String timelineName;
+    Event head;
+    Event tail;
+    int currentYear;
     
     Event[] timelineArr;
     
@@ -67,8 +70,7 @@ public class timelineGUI extends javax.swing.JFrame {
         Publish.setVisible(false);
         yearChoice.setVisible(false);
         jScrollPane1.setVisible(false);        
-        
-}
+}       
     
 
     /**
@@ -356,7 +358,6 @@ public class timelineGUI extends javax.swing.JFrame {
         if(!(input>arrLength && input<0)) //as long as the input does not exceed the length of the timeline and is not less than 0
         { 
             Timeline.setValue(input);
-            YearLabel.setText(timelineArr[Timeline.getValue()].getYear());
         }
     }                                      
 
@@ -411,7 +412,7 @@ public class timelineGUI extends javax.swing.JFrame {
     private void PublishActionPerformed(java.awt.event.ActionEvent evt) {                                        
         
         //if any of the features are not null
-        if(!currentInfoBox.equals("") || !currentTitle.equals("") || timelineArr[Timeline.getValue()].getImage() != null)
+        if(searchList(Timeline.getValue()) != null)
         {
             System.out.println("Editing an existing event...");
 
@@ -437,11 +438,12 @@ public class timelineGUI extends javax.swing.JFrame {
                 PrintWriter shovel = new PrintWriter(file);
                 shovel.println(Timeline.getValue());
                 shovel.println(Title.getText());
-                timelineArr[Timeline.getValue()].setTitle(Title.getText());
                 shovel.println(infoBox.getText());
-                timelineArr[Timeline.getValue()].setInfo(infoBox.getText());
                 shovel.println("null");
                 shovel.close();
+                
+                Event e = new Event(Timeline.getValue(),Title.getText(),infoBox.getText(),null,null,null);
+                addToList(e);
             }
             catch(FileNotFoundException e)
             {
@@ -470,20 +472,32 @@ public class timelineGUI extends javax.swing.JFrame {
 
     private void TimelineStateChanged(javax.swing.event.ChangeEvent evt) {                                      
         int value=Timeline.getValue();
-        YearLabel.setText(timelineArr[value].getYear());
-        if( (timelineArr[value].getInfo() !=null) || (timelineArr[value].getTitle() !=null) || (timelineArr[value].getImage() !=null) ) {
-            Event e = timelineArr[value]; // Find the corresponding event from the event array
-            setEventGui(e.getYear(),e.getTitle(),e.getInfo(),e.getImage()); //set the components of the GUI appropriately
+        int year = endYear - (arrLength-value);
+        if(year >= 0)
+        {
+            YearLabel.setText(year + " C.E.");
+        }
+        else
+        {
+            year = year * -1; //convert the negative number to a positive
+            YearLabel.setText(year + " B.C.E");
+        }
+        Event e = searchList(value);
+        if( e != null ) 
+        {
+            setEventGui(e.getTitle(),e.getInfo(),e.getImage()); //set the components of the GUI appropriately
             System.out.println("Loading Event... \""+ e.getTitle()+"\"");
-            if(e.getImage()==null){
+            if(e.getImage()==null)
+            {
                 frame.setIcon(null);
             }
             
             //System.out.println("Year: " + e.getYear() + "\n" + "Title: " + e.getTitle() + "\n" + "Info: " + e.getInfo() + "\n" + "Image: " + e.getImage());
         }
-        else{
+        else
+        {
             //System.out.println("null event");
-            setEmptyEventGUI(value);
+            setEmptyEventGUI();
         }
     }                                     
 
@@ -542,12 +556,11 @@ public class timelineGUI extends javax.swing.JFrame {
 /*********************************************************************************************************************************************************************/
     
 /*********************************************************************************************************************************************************************/
-    private void editPhoto()
-            
+    private void editPhoto()        
     {
         //Make a photo directory for the timeline if one has not already been created.  
-        System.out.println(timelineName);
         File photoDir = new File("Timelines/"+timelineName+".resources");
+        currentYear = Timeline.getValue();
         if(!photoDir.exists()) //if there is no resources directory for this timeline
         { 
             System.out.println("create a new resources directory for: "+timelineName);
@@ -601,7 +614,8 @@ public class timelineGUI extends javax.swing.JFrame {
         try
         {
             //If the event does not yet exist
-            if((timelineArr[Timeline.getValue()].getInfo() == null) && (timelineArr[Timeline.getValue()].getTitle() == null) && (timelineArr[Timeline.getValue()].getImage() == null))
+            System.out.println("current Year " + currentYear);
+            if(searchList(currentYear) == null)
             {
                 System.out.println("Creating new event...");
                 FileWriter file = new FileWriter(timelineFile,true); //Make a new FileWriter with append = true so that new events will be appended instead of overwriting existing data
@@ -610,7 +624,8 @@ public class timelineGUI extends javax.swing.JFrame {
                 shovel.println("");
                 shovel.println("");
                 shovel.println(imgName);
-                timelineArr[Timeline.getValue()].setImage(img); //write the image dynamically into the timeline array
+                Event e = new Event(Timeline.getValue(),"","",img,null,null);
+                addToList(e);
                 shovel.close();
             }
             
@@ -636,7 +651,7 @@ public class timelineGUI extends javax.swing.JFrame {
 
                 bw.write(imgName + "\n"); //write the image name to the temp file
 
-                timelineArr[Timeline.getValue()].setImage(img);
+                searchList(currentYear).setImage(img);
 
                  while ((currentLine = br.readLine()) != null) //read everything after the where the photo was saved and write it to the temp file
                  {
@@ -689,7 +704,7 @@ public class timelineGUI extends javax.swing.JFrame {
             br.readLine(); //read the line containing the title (skipping it)
             bw.write(Title.getText()+"\n"); //write the edited text to the temp file
             
-            timelineArr[Timeline.getValue()].setTitle(Title.getText()); //update the array
+            searchList(currentYear).setTitle(Title.getText()); //update the list dynamically
 
              while ((currentLine = br.readLine()) != null) //read everthing after the title and write it to the temp file
              {
@@ -740,7 +755,7 @@ public class timelineGUI extends javax.swing.JFrame {
             br.readLine(); //read the line containg the old info (skipping it)
             bw.write(infoBox.getText()+"\n"); //write the edited text to the temp file
             
-            timelineArr[Timeline.getValue()].setInfo(infoBox.getText()); //update the array
+            searchList(currentYear).setInfo(infoBox.getText()); //update the list
 
              while ((currentLine = br.readLine()) != null) //read everthing after the info and write it to the temp file
              {
@@ -769,9 +784,8 @@ public class timelineGUI extends javax.swing.JFrame {
      
 /*********************************************************************************************************************************************************************/    
     
-    public void setEventGui(String year, String title,String info, BufferedImage img)
+    public void setEventGui(String title,String info, BufferedImage img)
     {
-            YearLabel.setText(year);
             if(img != null) //if the image is not null
             {// Make a JLabel that will contain an ImageIcon object.  The ImageIcon object takes a Buffered Image as parameters
                if(img.getWidth()>400 || img.getHeight()>400)
@@ -787,7 +801,7 @@ public class timelineGUI extends javax.swing.JFrame {
             Title.setText(title);
     }
     
-    public void setEmptyEventGUI(int year)
+    public void setEmptyEventGUI()
     {
            infoBox.setText("");
            Title.setText("");
@@ -832,13 +846,11 @@ public class timelineGUI extends javax.swing.JFrame {
     
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
      *  Build an already existing timeline by reading information from the proper timeline file    *
-     *  and creating an array containing the information                                           *
+     *  and creating a doubly linked list containing the information                               *
      * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
-    private void buildTimeline(){
-        
-        
-        int yearSet;
+    private void buildTimeline()
+    {
         JFileChooser fileChooser = new JFileChooser();
         File currentDIR = new File("Timelines");
         fileChooser.setCurrentDirectory(currentDIR);
@@ -865,80 +877,26 @@ public class timelineGUI extends javax.swing.JFrame {
         { 
             BufferedReader in = new BufferedReader( new FileReader(timelineFile) ); //make a BufferedReader class that reads from the desired Timeline file
             arrLength = Integer.parseInt(in.readLine());
-            System.out.println(arrLength);
             endYear = Integer.parseInt(in.readLine());
-            System.out.println(endYear);
-        
-            timelineArr = new Event[arrLength+1];
-            System.out.println(timelineArr.length);
-            System.out.println("endYear "+endYear);
+
             
-            //If the timeline specified ends before year 0.  
-            if(yearChoiceNew.getText().equals("B.C.E")){
-                yearSet = endYear;
-                for(int i = arrLength;i>=0;i--){
-                    Event e = new Event(yearSet + " B.C.E",null,null,null,i);
-                    timelineArr[i]=e;
-                    yearSet--;
-                }  
-            }
-            else{
-        
-                //SET the year variables in the array
-                if((endYear - arrLength) < 0){
-                    yearSet = 0;
-                    //Starting from the point in the array where the year 0 would be found move up through the array modifying the year attributes of each event object
-                    System.out.println("where year 0 is: " + (arrLength - endYear));
-                    for(int i = (arrLength - endYear); i <= arrLength; i++){
-                        Event e = new Event(yearSet + " C.E.",null,null,null,i);
-                        timelineArr[i] = e;
-                        //System.out.println(timelineArr[i].getYear());
-                        yearSet++;
-                    }
-                    //Starting from the point in the array where the year 1 would be found move down through the array modifying the year attributes of each event object
-                    yearSet = 1;
-                    for (int i=(arrLength - endYear)-1; i >= 0; i--){
-                        Event e = new Event(yearSet + " B.C.E.",null,null,null,i);
-                        timelineArr[i] = e;
-                        //System.out.println(timelineArr[i].getYear());
-                        yearSet++;
-                    }
-                }
-                //ELSE if the timeline specified does not extend before year 0
-                else{
-                    yearSet = endYear - arrLength;
-                    System.out.println(yearSet);
-                    for (int i=0; i <= arrLength; i++){
-                        Event e = new Event(yearSet + " C.E.",null,null,null,i);
-                        timelineArr[i] = e;
-                        //System.out.println(timelineArr[i].getYear());
-                        yearSet++;
-                    }
-                }
-            }
-            newButton.setVisible(false);
-            openButton.setVisible(false);
-            //READ data from the file to fill the array
-            while(in.ready()) //While there are still lines in the file
+            //store information for the rest of the list
+            while(in.ready())
             {
-                System.out.println("reading lines");
-                int index = Integer.parseInt(in.readLine()); //read the index of the event
-                String year = (timelineArr[index].getYear()); //read the year from the array
+                int index = Integer.parseInt(in.readLine());//read the index
                 String title = in.readLine();//read the title
                 String info = in.readLine(); //read the info from the next line, we will have to modify this to make it access as many lines as needed
                 String stringImg = in.readLine(); //read the name of the picture that goes with this event
                 BufferedImage img = null;
                 try 
                 {
-                   img = ImageIO.read(new File("Timelines/"+timelineName+".resources/"+stringImg)); //try to create a new image
+                    img = ImageIO.read(new File("Timelines/"+timelineName+".resources/"+stringImg)); //try to create a new image
                 }
                 catch (IOException e) {System.err.println("The image "+stringImg+" could not be found");}
-
-
-                Event newEvent = new Event(year,title,info,img,index); //make a new event with the read values
-                timelineArr[index] = newEvent; //put the event in the timeline array
+                
+                Event e = new Event(index,title,info,img,null,null);
+                addToList(e);  
             }
-            buildSlider();
         }
         catch(NullPointerException e)
         {
@@ -955,6 +913,9 @@ public class timelineGUI extends javax.swing.JFrame {
             // readLine() method might throw this exception
             System.err.println("Error: something bad happened reading" + timelineFile +", the file may be corrupt.  Editing the file independently of this program may cause problems" ); 
         }
+        newButton.setVisible(false);
+        openButton.setVisible(false);
+        buildSlider();
          
     }
     
@@ -965,8 +926,7 @@ public class timelineGUI extends javax.swing.JFrame {
     
     private void buildNewTimeline()
     {
-        int yearSet;
-        Event[] timeline = new Event[arrLength+1];
+
         final File timelinesDir = new File("./Timelines"); //used to decide whether there is a Timelines directory 
         final File timelineFile;
         String filename;
@@ -988,79 +948,38 @@ public class timelineGUI extends javax.swing.JFrame {
             timelineFile = new File("Timelines/"+filename); //make a new file in the Timelines directory
         }
 
-            try
-            {
-                timelineFile.createNewFile(); // Creates a new file
-            }
-            catch(IOException e)
-            {
-                System.err.println("An I/O error occured, please try again");
-            }
-            
-            try
-            {
-                File tmp = File.createTempFile("tmp",".txt"); //make a temporary file
-                BufferedWriter bw = new BufferedWriter(new FileWriter(tmp));
-                bw.write(Integer.toString(arrLength)+"\n");
-                bw.write(Integer.toString(endYear)+"\n");
-                bw.close();
-                        
-                File oldFile = timelineFile; //make a copy of the old file
-                if (oldFile.delete()) //delete the file, if successful rename the tmp file and make it the usable file
-                    tmp.renameTo(oldFile);
-                
-            }
-            catch(FileNotFoundException e)
-            {
-                // FileReader constructor might throw this exception
-                System.err.println("Error: file \"" + timelineFile + "\" does not exist"); 
-            }
-            catch(IOException e)
-            {
-                // readLine() method might throw this exception
-                System.err.println("Error: something bad happened reading" + timelineFile +", the file may be corrupt.  Editing the file independently of this program may cause problems" ); 
-            } 
-        
-        //If the timeline specified ends before year 0.
-        if(yearChoiceNew.getText().equals("B.C.E.")){
-            yearSet = endYear;
-            for(int i = arrLength;i>=0;i--){
-                Event e = new Event(yearSet + " B.C.E",null,null,null,i);
-                timeline[i]=e;
-                yearSet++;
-            }  
+        try
+        {
+            timelineFile.createNewFile(); // Creates a new file
         }
-        else{
-        
-            //IF the timeline specified does extend before year 0
-            if((endYear - arrLength) < 0){
-                yearSet = 0;
-                //Starting from the point in the array where the year 0 would be found move up through the array modifying the year attributes of each event object
-                for(int i = (arrLength - endYear); i <= arrLength; i++){
-                    Event e = new Event(yearSet + " C.E.",null,null,null,i);
-                    timeline[i] = e;
-                    yearSet++;
-                }
-                //Starting from the point in the array where the year 1 would be found move down through the array modifying the year attributes of each event object
-                yearSet = 1;
-                for (int i=(arrLength - endYear)-1; i >= 0; i--){
-                    Event e = new Event(yearSet + " B.C.E.",null,null,null,i);
-                    timeline[i] = e;
-                    yearSet++;
-                }
-            }
+        catch(IOException e)
+        {
+            System.err.println("An I/O error occured, please try again");
+        }
 
-            //ELSE if the timeline specified does not extend before year 0
-            else{
-                yearSet = endYear - arrLength;
-                for (int i=0; i <= arrLength; i++){
-                    Event e = new Event(yearSet + " C.E.",null,null,null,i);
-                    timeline[i] = e;
-                    yearSet++;
-                }
-            }
+        try
+        {
+            File tmp = File.createTempFile("tmp",".txt"); //make a temporary file
+            BufferedWriter bw = new BufferedWriter(new FileWriter(tmp));
+            bw.write(Integer.toString(arrLength)+"\n");
+            bw.write(Integer.toString(endYear)+"\n");
+            bw.close();
+
+            File oldFile = timelineFile; //make a copy of the old file
+            if (oldFile.delete()) //delete the file, if successful rename the tmp file and make it the usable file
+                tmp.renameTo(oldFile);
+
         }
-        timelineArr = timeline;
+        catch(FileNotFoundException e)
+        {
+            // FileReader constructor might throw this exception
+            System.err.println("Error: file \"" + timelineFile + "\" does not exist"); 
+        }
+        catch(IOException e)
+        {
+            // readLine() method might throw this exception
+            System.err.println("Error: something bad happened reading" + timelineFile +", the file may be corrupt.  Editing the file independently of this program may cause problems" ); 
+        } 
         buildSlider();   
     }
     
@@ -1069,9 +988,9 @@ public class timelineGUI extends javax.swing.JFrame {
      *                                                                                             *
      *                                                                                             * 
      * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-    public void buildSlider(){
+    public void buildSlider()
+    {
         
-
         Timeline.setVisible(true);
         Edit.setVisible(true);
         Search.setVisible(true);
@@ -1094,6 +1013,95 @@ public class timelineGUI extends javax.swing.JFrame {
         infoBox.setLineWrap(true); //force the info to wrap nicely
         infoBox.setWrapStyleWord(true);
         System.out.println("GUI timeline created");
+    }
+    
+    private Event searchList(int index)
+    {
+        System.out.println("The user has chosen index:" + index);
+        Event currentEvent = head;
+
+        // IF there is at least one item in the list
+        if(currentEvent != null)
+        {
+            //If the list only has one item in it AND it is the one we are indexing
+            if( currentEvent.equals(tail) && index == currentEvent.getIndex() )
+            {
+                System.out.println("The list has only one item in it");
+                return currentEvent;
+            }
+            //Search through the list 
+            while( !(currentEvent.equals(tail)) )
+            {
+                if(currentEvent.getIndex() == index) 
+                {
+                    currentEvent.printAll();
+                    return currentEvent;
+                }
+                else 
+                {
+                    currentEvent = currentEvent.getNext();
+                }
+            }
+        }
+        //ELSE there is nothing in the list or the item requested was not found
+        System.err.println("The event requested was not found");
+        return null;
+    }
+    
+    private void addToList(Event e)
+    {
+        Event currentEvent = head;
+        System.out.println("Adding event " + e.getTitle() + " to the list");
+        
+        //if there is nothing in the list yet, make the head
+        if(currentEvent == null) 
+        {
+            System.out.println("Adding the first event");
+            head = tail = e;
+        }
+        else if(e.getIndex() < currentEvent.getIndex()) // Insert before head
+        {
+            e.setLast(tail);
+            e.setNext(head);
+            head = e;
+        }
+        else if(e.getIndex() > tail.getIndex()) // Insert after tail
+        {
+            e.setNext(head);
+            e.setLast(tail);
+            e.getLast().setNext(e);
+            tail = e;
+        }
+        else
+        {
+            // ELSE if we are inserting this event somewhere in the middle of the list
+            while ( currentEvent.getIndex() < e.getIndex() ) 
+            {
+                currentEvent = currentEvent.getNext();
+            }
+            e.setNext(currentEvent);
+            e.setLast(currentEvent.getLast());
+            e.getLast().setNext(e);
+            currentEvent.setLast(e);
+        }
+        printList();
+    }
+    private void printList()
+    {
+        Event currentEvent = head;
+        if(currentEvent == tail)
+        {
+            System.out.print(currentEvent.getTitle());
+        }
+        else
+        {
+            while(currentEvent!=tail)
+            {
+                System.out.print(currentEvent.getTitle() + " -> ");
+                currentEvent = currentEvent.getNext();
+            }
+            System.out.print(tail.getTitle());
+        }
     }
 /*********************************************************************************************************************************************************************/
 
