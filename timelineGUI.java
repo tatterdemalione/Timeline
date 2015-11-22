@@ -14,7 +14,7 @@
   *  You should have received a copy of the GNU General Public License
   *  along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
   **********************************************************************************************************************************************************************/
-package timeline;
+package Timeline;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
