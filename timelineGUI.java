@@ -31,13 +31,14 @@ public class timelineGUI extends javax.swing.JFrame {
     private String currentTitle;
     private String currentInfoBox;
     
-    int endYear;
-    int arrLength;
-    String timelineName;
-    Event head;
-    Event tail;
-    int currentYear;
-    
+    private int endYear;
+    private int arrLength;
+    private String timelineName;
+    private Event head;
+    private Event tail;
+    private int currentYear;
+    private String era;
+
     
     /**
      * Creates new form timelineGUI
@@ -441,7 +442,7 @@ public class timelineGUI extends javax.swing.JFrame {
                 shovel.println("null");
                 shovel.close();
                 
-                Event e = new Event(Timeline.getValue(),Title.getText(),infoBox.getText(),null,null,null);
+                Event e = new Event(Timeline.getValue(),Title.getText(),infoBox.getText(),null);
                 addToList(e);
             }
             catch(FileNotFoundException e)
@@ -471,15 +472,23 @@ public class timelineGUI extends javax.swing.JFrame {
 
     private void TimelineStateChanged(javax.swing.event.ChangeEvent evt) {                                      
         int value=Timeline.getValue();
-        int year = endYear - (arrLength-value);
-        if(year >= 0)
+        int year;
+        if(era.equals("C")) //if the timeline includes both the C.E. era and B.C.E era
         {
-            YearLabel.setText(year + " C.E.");
+            year = endYear - (arrLength-value);
+            if(year >= 0) 
+            {
+                YearLabel.setText(year + " C.E.");
+            }
+            else
+            {
+                year = year * -1; //convert the negative number to a positive
+                YearLabel.setText(year + " B.C.E.");
+            }
         }
-        else
-        {
-            year = year * -1; //convert the negative number to a positive
-            YearLabel.setText(year + " B.C.E");
+        else{ //if the timeline only includes the B.C.E era
+            year = (endYear + arrLength) - value;
+            YearLabel.setText(year + " B.C.E.");
         }
         Event e = searchList(value);
         if( e != null ) 
@@ -495,7 +504,6 @@ public class timelineGUI extends javax.swing.JFrame {
         }
         else
         {
-            //System.out.println("null event");
             setEmptyEventGUI();
         }
     }                                     
@@ -623,7 +631,7 @@ public class timelineGUI extends javax.swing.JFrame {
                 shovel.println("");
                 shovel.println("");
                 shovel.println(imgName);
-                Event e = new Event(Timeline.getValue(),"","",img,null,null);
+                Event e = new Event(Timeline.getValue(),"","",img);
                 addToList(e);
                 shovel.close();
             }
@@ -877,6 +885,7 @@ public class timelineGUI extends javax.swing.JFrame {
             BufferedReader in = new BufferedReader( new FileReader(timelineFile) ); //make a BufferedReader class that reads from the desired Timeline file
             arrLength = Integer.parseInt(in.readLine());
             endYear = Integer.parseInt(in.readLine());
+            era = in.readLine();
 
             
             //store information for the rest of the list
@@ -893,7 +902,7 @@ public class timelineGUI extends javax.swing.JFrame {
                 }
                 catch (IOException e) {System.err.println("The image "+stringImg+" could not be found");}
                 
-                Event e = new Event(index,title,info,img,null,null);
+                Event e = new Event(index,title,info,img);
                 addToList(e);  
             }
         }
@@ -962,12 +971,38 @@ public class timelineGUI extends javax.swing.JFrame {
             BufferedWriter bw = new BufferedWriter(new FileWriter(tmp));
             bw.write(Integer.toString(arrLength)+"\n");
             bw.write(Integer.toString(endYear)+"\n");
+            bw.write(yearChoiceNew.getText()+"\n");
+            
             bw.close();
 
             File oldFile = timelineFile; //make a copy of the old file
             if (oldFile.delete()) //delete the file, if successful rename the tmp file and make it the usable file
                 tmp.renameTo(oldFile);
 
+        
+            BufferedReader in = new BufferedReader( new FileReader(timelineFile) ); //make a BufferedReader class that reads from the desired Timeline file
+            arrLength = Integer.parseInt(in.readLine());
+            endYear = Integer.parseInt(in.readLine());
+            era = in.readLine();
+
+            
+            //store information in the list
+            while(in.ready())
+            {
+                int index = Integer.parseInt(in.readLine());//read the index
+                String title = in.readLine();//read the title
+                String info = in.readLine(); //read the info from the next line, we will have to modify this to make it access as many lines as needed
+                String stringImg = in.readLine(); //read the name of the picture that goes with this event
+                BufferedImage img = null;
+                try 
+                {
+                    img = ImageIO.read(new File("Timelines/"+timelineName+".resources/"+stringImg)); //try to create a new image
+                }
+                catch (IOException e) {System.err.println("The image "+stringImg+" could not be found");}
+                
+                Event e = new Event(index,title,info,img);
+                addToList(e);  
+            }
         }
         catch(FileNotFoundException e)
         {
@@ -1131,4 +1166,3 @@ public class timelineGUI extends javax.swing.JFrame {
     private javax.swing.JButton yearChoiceNew;
     // End of variables declaration                   
 }
-
