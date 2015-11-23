@@ -3,7 +3,7 @@
 # Timeline
 A Java GUI application for building an interactive history timeline.  This application lets you build your own timeline, adding information and images that interest you!
 
-Planned Updates: 
+## Planned Updates: 
 - Provide functionality for multiple events in each year.  Using an array of linked lists containing events and maybe a JTabbedPane interface?
 - Put a logo on the main screen
 - Add a backup feature
