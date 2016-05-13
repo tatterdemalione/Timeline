@@ -30,16 +30,24 @@ public class timelineGUI extends javax.swing.JFrame {
 
     private String currentTitle;
     private String currentInfoBox;
+ 
+    
     
     private int endYear;
     private int arrLength;
     private String timelineName;
+    
+    //head & tail for event list
     private Event head;
     private Event tail;
+    
+    //head & tail for tab GUI components
+    private guiEvent guiHead;
+    private guiEvent guiTail;
+    
     private int currentYear;
     private String era;
 
-    
     /**
      * Creates new form timelineGUI
      */
@@ -60,16 +68,16 @@ public class timelineGUI extends javax.swing.JFrame {
         Timeline.setVisible(false);
         Edit.setVisible(false);
         Search.setVisible(false);
-        Title.setVisible(false);
         TitleLabel.setVisible(false);
         YearLabel.setVisible(false);
-        infoBox.setVisible(false);
-        frame.setVisible(false);
         editPhoto.setVisible(false);
         Edit.setVisible(false);
         Publish.setVisible(false);
         yearChoice.setVisible(false);
-        jScrollPane1.setVisible(false);        
+        tabBox.setVisible(false);
+        addTab.setVisible(false);
+        
+        
 }       
     
 
@@ -93,19 +101,17 @@ public class timelineGUI extends javax.swing.JFrame {
         lengthPrompt = new javax.swing.JLabel();
         submitButton = new javax.swing.JButton();
         Search = new javax.swing.JTextField();
-        Edit = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        infoBox = new javax.swing.JTextArea();
-        TitleLabel = new javax.swing.JLabel();
         Timeline = new javax.swing.JSlider();
-        Title = new javax.swing.JTextField();
-        editPhoto = new javax.swing.JButton();
-        frame = new javax.swing.JLabel();
         YearLabel = new javax.swing.JLabel();
-        Publish = new javax.swing.JButton();
         yearChoice = new javax.swing.JButton();
         yearChoiceNew = new javax.swing.JButton();
         errMsg = new javax.swing.JLabel();
+        tabBox = new javax.swing.JTabbedPane();
+        TitleLabel = new javax.swing.JLabel();
+        Edit = new javax.swing.JButton();
+        editPhoto = new javax.swing.JButton();
+        Publish = new javax.swing.JButton();
+        addTab = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -118,6 +124,7 @@ public class timelineGUI extends javax.swing.JFrame {
 
         titleText.setText("Welcome to Timeline!  Would you like to open an existing timeline or create a new one?");
 
+        nameField.setToolTipText("Hit Enter to submit");
         nameField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 nameFieldActionPerformed(evt);
@@ -126,12 +133,14 @@ public class timelineGUI extends javax.swing.JFrame {
 
         endYearPrompt.setText("In what year would you like your timeline to end?");
 
+        lengthField.setToolTipText("Hit Enter to submit");
         lengthField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 lengthFieldActionPerformed(evt);
             }
         });
 
+        endYearField.setToolTipText("Hit Enter to submit");
         endYearField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 endYearFieldActionPerformed(evt);
@@ -156,26 +165,12 @@ public class timelineGUI extends javax.swing.JFrame {
             }
         });
 
+        Search.setToolTipText("Search for a specific year");
         Search.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 SearchActionPerformed(evt);
             }
         });
-
-        Edit.setText("Edit");
-        Edit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                EditActionPerformed(evt);
-            }
-        });
-
-        infoBox.setEditable(false);
-        infoBox.setColumns(20);
-        infoBox.setRows(5);
-        infoBox.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(0, 51, 153)));
-        jScrollPane1.setViewportView(infoBox);
-
-        TitleLabel.setText("Title");
 
         Timeline.setMajorTickSpacing(100);
         Timeline.setMaximum(0);
@@ -188,24 +183,7 @@ public class timelineGUI extends javax.swing.JFrame {
             }
         });
 
-        Title.setEditable(false);
-        Title.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(0, 51, 153)));
-
-        editPhoto.setText("Edit Photo");
-        editPhoto.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editPhotoActionPerformed(evt);
-            }
-        });
-
         YearLabel.setText("Year");
-
-        Publish.setText("Publish");
-        Publish.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                PublishActionPerformed(evt);
-            }
-        });
 
         yearChoice.setText("C.E.");
         yearChoice.addActionListener(new java.awt.event.ActionListener() {
@@ -225,11 +203,47 @@ public class timelineGUI extends javax.swing.JFrame {
         errMsg.setForeground(new java.awt.Color(255, 0, 0));
         errMsg.setText("* The timeline must be at least 1 year in length AND less than 1 million");
 
+        TitleLabel.setText("Title");
+
+        Edit.setText("Edit");
+        Edit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EditActionPerformed(evt);
+            }
+        });
+
+        editPhoto.setText("Edit Photo");
+        editPhoto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editPhotoActionPerformed(evt);
+            }
+        });
+
+        Publish.setText("Publish");
+        Publish.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                PublishActionPerformed(evt);
+            }
+        });
+
+        addTab.setText("[ + ]");
+        addTab.setToolTipText("Add a new tab");
+        addTab.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addTabActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(Timeline, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(YearLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(TitleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(915, 915, 915))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -245,29 +259,6 @@ public class timelineGUI extends javax.swing.JFrame {
                                 .addGap(25, 25, 25)
                                 .addComponent(nameField, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(Edit)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(Publish)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(editPhoto))
-                                    .addComponent(Title, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(frame, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 539, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(Search, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(yearChoice))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(TitleLabel)
-                                .addGap(73, 73, 73)
-                                .addComponent(YearLabel))))
-                    .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(titleText))
                     .addGroup(layout.createSequentialGroup()
@@ -278,18 +269,30 @@ public class timelineGUI extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(yearChoiceNew))
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(Search, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(yearChoice))
+                    .addGroup(layout.createSequentialGroup()
                         .addGap(159, 159, 159)
                         .addComponent(lengthPrompt)
-                        .addGap(25, 25, 25)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lengthField, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(6, 6, 6)
-                                .addComponent(errMsg))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(lengthField, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(submitButton)))))
-                .addContainerGap(45, Short.MAX_VALUE))
+                            .addComponent(errMsg)
+                            .addComponent(submitButton)))
+                    .addComponent(tabBox, javax.swing.GroupLayout.PREFERRED_SIZE, 1110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Timeline, javax.swing.GroupLayout.PREFERRED_SIZE, 1100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(addTab, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Edit)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(editPhoto, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Publish, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -315,29 +318,27 @@ public class timelineGUI extends javax.swing.JFrame {
                     .addComponent(submitButton)
                     .addComponent(lengthPrompt))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(YearLabel)
-                    .addComponent(TitleLabel)
-                    .addComponent(errMsg))
-                .addGap(9, 9, 9)
+                .addComponent(errMsg, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(14, 14, 14)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(Search, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(yearChoice))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(YearLabel)
+                    .addComponent(TitleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addComponent(Timeline, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(5, 5, 5)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(Title, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(frame, javax.swing.GroupLayout.PREFERRED_SIZE, 353, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(Edit)
-                            .addComponent(Publish)
-                            .addComponent(editPhoto)))
-                    .addComponent(jScrollPane1))
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(Publish, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(Edit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(addTab, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(editPhoto)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tabBox, javax.swing.GroupLayout.PREFERRED_SIZE, 552, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
@@ -391,89 +392,10 @@ public class timelineGUI extends javax.swing.JFrame {
         nameField.setVisible(true);
     }                                         
 
-    private void EditActionPerformed(java.awt.event.ActionEvent evt) {                                     
-        
-        currentInfoBox = infoBox.getText(); //get the current values of the text areas
-        currentTitle = Title.getText();
-        System.out.println(currentTitle);
-
-        infoBox.setEditable(true); //set the textAreas to be editable
-        Title.setEditable(true);
-        
-        System.out.println(Title.isEditable());
-        
-        Timeline.setEnabled(false); //disable the user from being able to use the slider until the editing has been published
-        Search.setEditable(false);
-        editPhoto.setVisible(false);
-        Publish.setVisible(true); //make the publish button visible
-        
-    }                                    
-
-    private void PublishActionPerformed(java.awt.event.ActionEvent evt) {                                        
-        
-        //if any of the features are not null
-        if(searchList(Timeline.getValue()) != null)
-        {
-            System.out.println("Editing an existing event...");
-
-            if(!(currentTitle.equals(Title.getText())))
-            { //if the Title has been changed
-                editTitle();//edit the title
-            }
-
-            if(!(currentInfoBox.equals(infoBox.getText())))
-            { //if the info has been changed
-                editInfoBox(); //edit the info
-            }
-        }
-        
-        else //else if the fields are empty, indicating the user intends to make a new event
-        {
-            System.out.println("Creating new event...");
-            File parentDir = new File ("Timelines");
-            File timelineFile = new File(parentDir, timelineName+".txt"); //find the file to be written to
-            try
-            {
-                FileWriter file = new FileWriter(timelineFile,true); //Make a new FileWriter with append = true so that new events will be appended instead of overwriting existing data
-                PrintWriter shovel = new PrintWriter(file);
-                shovel.println(Timeline.getValue());
-                shovel.println(Title.getText());
-                shovel.println(infoBox.getText());
-                shovel.println("null");
-                shovel.close();
-                
-                Event e = new Event(Timeline.getValue(),Title.getText(),infoBox.getText(),null);
-                addToList(e);
-            }
-            catch(FileNotFoundException e)
-            {
-                // FileReader constructor might throw this exception
-                System.err.println("Error: file \"" + timelineFile + "\" does not exist");
-            }
-            catch(IOException e)
-            {
-                // readLine() method might throw this exception
-                System.err.println("Error: something bad happened reading" + timelineFile +", the file may be corrupt.  Editing the file independently of this program may cause problems" );
-            }
-        }
-        
-        Publish.setVisible(false); // hide the publish button
-        infoBox.setEditable(false); //set the textAreas to be uneditable
-        Title.setEditable(false);
-        Timeline.setEnabled(true); // enable the JSlider
-        Search.setEditable(true);
-        editPhoto.setVisible(true);
-    }                                       
-
-    private void editPhotoActionPerformed(java.awt.event.ActionEvent evt) {                                          
-        
-        editPhoto();
-    }                                         
-
     private void TimelineStateChanged(javax.swing.event.ChangeEvent evt) {                                      
         int value=Timeline.getValue();
         int year;
-        if(era.equals("C")) //if the timeline includes both the C.E. era and B.C.E era
+        if(era.equals("C.E.")) //if the timeline includes both the C.E. era and B.C.E era
         {
             year = endYear - (arrLength-value);
             if(year >= 0) 
@@ -486,24 +408,49 @@ public class timelineGUI extends javax.swing.JFrame {
                 YearLabel.setText(year + " B.C.E.");
             }
         }
-        else{ //if the timeline only includes the B.C.E era
+        else
+        { //if the timeline only includes the B.C.E era
             year = (endYear + arrLength) - value;
             YearLabel.setText(year + " B.C.E.");
         }
+        
+        
         Event e = searchList(value);
+        
         if( e != null ) 
         {
-            setEventGui(e.getTitle(),e.getInfo(),e.getImage()); //set the components of the GUI appropriately
+            removeAllGuiEvents();
+            buildTabs(e.getTitle(), e.getInfo(), e.getImage()); //build the first tab
+            System.out.println("Setting existing event GUI");
+            
+            if(e.getNext() != null) //if the list has more than one item in it
+            {
+                System.out.println("There is more than one event in the list");
+                //If this particular year contains one or more events start building addtional GUI tabs
+                if(e.getNext().getIndex() == e.getIndex()) //if the next item in the list also has the same index
+                {
+                    while(e.getNext().getIndex() == e.getIndex()) //loop through the list building tabs as needed
+                    {
+                        System.out.println("Building already existing tab for" + e.getTitle());
+                        buildTabs(e.getTitle(), e.getInfo(), e.getImage());
+                        e = e.getNext();
+                    }
+                }
+                else
+                {
+                    System.out.println("There is only one tab for this event");
+                }
+            }
             System.out.println("Loading Event... \""+ e.getTitle()+"\"");
+            
             if(e.getImage()==null)
             {
-                frame.setIcon(null);
+                searchGuiList(tabBox.getSelectedIndex()).getFrame().setIcon(null);
             }
-            
-            //System.out.println("Year: " + e.getYear() + "\n" + "Title: " + e.getTitle() + "\n" + "Info: " + e.getInfo() + "\n" + "Image: " + e.getImage());
         }
         else
         {
+            System.out.println("Setting Empty GUI");
             setEmptyEventGUI();
         }
     }                                     
@@ -526,18 +473,23 @@ public class timelineGUI extends javax.swing.JFrame {
     }                                         
 
     private void lengthFieldActionPerformed(java.awt.event.ActionEvent evt) {                                            
-        try{
-        arrLength = Integer.parseInt(lengthField.getText());
-        } catch(NumberFormatException e){
+        try
+        {
+            arrLength = Integer.parseInt(lengthField.getText());
+        } 
+        catch(NumberFormatException e)
+        {
             errMsg.setVisible(true);
         }
-        System.out.println("arrLength: " + arrLength);
+        
         //As long as the Timeline specified will be less than a million years long AND bigger than 0 allow the user to create the timeline
-        if(arrLength>0 && arrLength<=1000000){
+        if( (arrLength > 0) && (arrLength <= 1000000) )
+        {
             errMsg.setVisible(false);
             submitButton.setVisible(true);
         }
-        else{
+        else
+        {
            errMsg.setVisible(true);
         }
         
@@ -556,6 +508,168 @@ public class timelineGUI extends javax.swing.JFrame {
         else
             yearChoiceNew.setText("C.E.");  
     }                                             
+
+    private void editPhotoActionPerformed(java.awt.event.ActionEvent evt) {                                          
+
+        editPhoto();
+    }                                         
+
+    private void EditActionPerformed(java.awt.event.ActionEvent evt) {                                     
+        
+        //set the current titles to what is already saved in order to make decisions regarding what to update in the .txt file while editing
+        
+        System.out.println(tabBox.getSelectedIndex());
+        printGuiList();
+        guiEvent currentEvent = searchGuiList(tabBox.getSelectedIndex());
+        System.out.println(currentEvent);
+        currentTitle = searchGuiList(1).getTitle().getText();
+        currentInfoBox = searchGuiList(tabBox.getSelectedIndex()).getInfoBox().getText();
+
+        
+        enableAllTabs(false);
+        Timeline.setEnabled(false); //disable the user from being able to use the slider until the editing has been published
+        Search.setEditable(false);
+        editPhoto.setVisible(false);
+        addTab.setEnabled(false);
+        Publish.setVisible(true); //make the publish button visible
+        
+        System.out.println("Currently selected tab is:" + tabBox.getSelectedIndex());
+        /*For some reason these searches below produce null pointer exceptions.  The list has the items correctly indexed...
+         it's a real puzzle */
+        searchGuiList(tabBox.getSelectedIndex()).getTitle().setEditable(true); //set the textAreas to be editable
+        searchGuiList(tabBox.getSelectedIndex()).getInfoBox().setEditable(true);
+        
+        System.out.println("editable? = " + searchGuiList(tabBox.getSelectedIndex()).getInfoBox().isEditable());
+    }                                    
+
+    private void PublishActionPerformed(java.awt.event.ActionEvent evt) {                                        
+
+        //if any of the features are not null
+        if(searchList(Timeline.getValue()) != null)
+        {
+            System.out.println("Editing an existing event...");
+
+            if(!(currentTitle.equals(searchGuiList(tabBox.getSelectedIndex()).getTitle().getText())))
+            { //if the Title has been changed
+                editTitle();//edit the title
+            }
+
+            if(!(currentInfoBox.equals(searchGuiList(tabBox.getSelectedIndex()).getInfoBox().getText())))
+            { //if the info has been changed
+                editInfoBox(); //edit the info
+            }
+        }
+
+        else //else if the fields are empty, indicating the user intends to make a new event
+        {
+            System.out.println("Creating new event...");
+            File parentDir = new File ("Timelines");
+            File timelineFile = new File(parentDir, timelineName+".txt"); //find the file to be written to
+            try
+            {
+                FileWriter file = new FileWriter(timelineFile,true); //Make a new FileWriter with append = true so that new events will be appended instead of overwriting existing data
+                PrintWriter shovel = new PrintWriter(file);
+                shovel.println(Timeline.getValue());
+                shovel.println(searchGuiList(tabBox.getSelectedIndex()).getTitle().getText());
+                shovel.println(searchGuiList(tabBox.getSelectedIndex()).getInfoBox().getText());
+                shovel.println("null");
+                shovel.close();
+
+                Event e = new Event(Timeline.getValue(),searchGuiList(tabBox.getSelectedIndex()).getTitle().getText(),searchGuiList(tabBox.getSelectedIndex()).getInfoBox().getText(),null);
+                addToList(e);
+            }
+            catch(FileNotFoundException e)
+            {
+                // FileReader constructor might throw this exception
+                System.err.println("Error: file \"" + timelineFile + "\" does not exist");
+            }
+            catch(IOException e)
+            {
+                // readLine() method might throw this exception
+                System.err.println("Error: something bad happened reading" + timelineFile +", the file may be corrupt.  Editing the file independently of this program may cause problems" );
+            }
+        }
+
+        Publish.setVisible(false); // hide the publish button
+        searchGuiList(tabBox.getSelectedIndex()).getInfoBox().setEditable(false); //set the textAreas to be uneditable
+        searchGuiList(tabBox.getSelectedIndex()).getTitle().setEditable(false);
+        Timeline.setEnabled(true); // enable the JSlider
+        Search.setEditable(true);
+        tabBox.setTitleAt(tabBox.getSelectedIndex(), searchGuiList( tabBox.getSelectedIndex() ).getTitle().getText()  );
+        enableAllTabs(true);
+        editPhoto.setVisible(true);
+        addTab.setEnabled(true);
+        
+        
+    }                                       
+
+    private void addTabActionPerformed(java.awt.event.ActionEvent evt) {                                       
+        
+   
+        
+        /* Build the tab GUI */
+        /*********************************************************************************************************************************************************************/
+        
+        javax.swing.JPanel tabInterface1 = new javax.swing.JPanel();
+        javax.swing.JLabel frame1 = new javax.swing.JLabel();
+        javax.swing.JTextField title1 = new javax.swing.JTextField();
+        javax.swing.JTextArea infoBox1 = new javax.swing.JTextArea();
+        javax.swing.JScrollPane jScrollPane2 = new javax.swing.JScrollPane();
+        
+        
+        title1.setEditable(false);
+        title1.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(0, 51, 153)));
+
+        infoBox1.setEditable(false);
+        infoBox1.setColumns(20);
+        infoBox1.setRows(5);
+        infoBox1.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(0, 51, 153)));
+        infoBox1.setLineWrap(true);
+        infoBox1.setWrapStyleWord(true);
+        
+        jScrollPane2.setViewportView(infoBox1);
+        
+        javax.swing.GroupLayout tabInterfaceLayout = new javax.swing.GroupLayout(tabInterface1);
+        tabInterface1.setLayout(tabInterfaceLayout);
+        tabInterfaceLayout.setHorizontalGroup(
+            tabInterfaceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tabInterfaceLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(tabInterfaceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(tabInterfaceLayout.createSequentialGroup()
+                        .addComponent(title1, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 163, Short.MAX_VALUE))
+                    .addComponent(frame1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 605, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        tabInterfaceLayout.setVerticalGroup(
+            tabInterfaceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tabInterfaceLayout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addComponent(title1, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(tabInterfaceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(tabInterfaceLayout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 436, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(tabInterfaceLayout.createSequentialGroup()
+                        .addComponent(frame1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(52, 52, 52))))
+        );
+        pack();
+        /*********************************************************************************************************************************************************************/
+       
+        tabBox.addTab("", tabInterface1); //add a tab
+        System.out.println("there are now " + tabBox.getTabCount() + " tabs");
+        tabBox.setSelectedIndex(tabBox.getTabCount()-1); //set the currently selected tab to the newly added one
+        
+        guiEvent currentTab = new guiEvent(tabBox.getSelectedIndex(), frame1, title1, infoBox1); //make an instance of a tabbed gui Event
+        System.out.println();
+        addToGuiList(currentTab); //add the guiEvent to the list
+        printGuiList();
+    }                                      
 /*********************************************************************************************************************************************************************/
     
     
@@ -608,10 +722,10 @@ public class timelineGUI extends javax.swing.JFrame {
                if(img.getWidth()>400 || img.getHeight()>400)
                { //if the image is large, divide it in half
                 Image image = (img.getScaledInstance((img.getWidth()/2),(img.getHeight()/2),1)); //reduce the size of the image
-                frame.setIcon(new ImageIcon(image));
+                searchGuiList(tabBox.getSelectedIndex()).getFrame().setIcon(new ImageIcon(image));
                }
                else{
-                frame.setIcon(new ImageIcon(img));
+                searchGuiList(tabBox.getSelectedIndex()).getFrame().setIcon(new ImageIcon(img));
                }
             }
         
@@ -688,7 +802,7 @@ public class timelineGUI extends javax.swing.JFrame {
     private void editTitle()
     {
         System.out.println("Editing title");     
-        File parentDir = new File ("Timelines");
+        File parentDir = new File("Timelines");
         File timelineFile = new File(parentDir, timelineName + ".txt"); //find the file to be written to
         String currentLine="love";
         try
@@ -709,9 +823,9 @@ public class timelineGUI extends javax.swing.JFrame {
             }
             
             br.readLine(); //read the line containing the title (skipping it)
-            bw.write(Title.getText()+"\n"); //write the edited text to the temp file
+            bw.write(searchGuiList(tabBox.getSelectedIndex()).getTitle().getText()+"\n"); //write the edited text to the temp file
             
-            searchList(currentYear).setTitle(Title.getText()); //update the list dynamically
+            searchList(currentYear).setTitle(searchGuiList(tabBox.getSelectedIndex()).getTitle().getText()); //update the list dynamically
 
              while ((currentLine = br.readLine()) != null) //read everthing after the title and write it to the temp file
              {
@@ -759,10 +873,10 @@ public class timelineGUI extends javax.swing.JFrame {
             }
 
             bw.write(br.readLine()+"\n"); //read the line containing the title and print it
-            br.readLine(); //read the line containg the old info (skipping it)
-            bw.write(infoBox.getText()+"\n"); //write the edited text to the temp file
+            br.readLine(); //read the line containing the old info (skipping it)
+            bw.write(searchGuiList(tabBox.getSelectedIndex()).getInfoBox().getText()+"\n"); //write the edited text to the temp file
             
-            searchList(currentYear).setInfo(infoBox.getText()); //update the list
+            searchList(currentYear).setInfo(searchGuiList(tabBox.getSelectedIndex()).getInfoBox().getText()); //update the list
 
              while ((currentLine = br.readLine()) != null) //read everthing after the info and write it to the temp file
              {
@@ -793,26 +907,92 @@ public class timelineGUI extends javax.swing.JFrame {
     
     public void setEventGui(String title,String info, BufferedImage img)
     {
-            if(img != null) //if the image is not null
-            {// Make a JLabel that will contain an ImageIcon object.  The ImageIcon object takes a Buffered Image as parameters
-               if(img.getWidth()>400 || img.getHeight()>400)
-               { //if the image is large, divide it in half
-                Image image = (img.getScaledInstance((img.getWidth()/2),(img.getHeight()/2),1)); //reduce the size of the image
-                frame.setIcon(new ImageIcon(image));
-               }
-               else{
-                frame.setIcon(new ImageIcon(img));
-               }
-            }
-            infoBox.setText(info); 
-            Title.setText(title);
+        removeAllGuiEvents();
+        tabBox.setTitleAt(0,title);
+        javax.swing.JLabel frame1 = new javax.swing.JLabel();
+        javax.swing.JTextField title1 = new javax.swing.JTextField();
+        javax.swing.JTextArea infoBox1 = new javax.swing.JTextArea();
+        
+        guiEvent currentTab = new guiEvent(tabBox.getSelectedIndex(), frame1, title1, infoBox1); //make an instance of a tabbed gui Event
+        addToGuiList(currentTab);
+        
+        if(img != null) //if the image is not null
+        {// Make a JLabel that will contain an ImageIcon object.  The ImageIcon object takes a Buffered Image as parameters
+           if(img.getWidth()>400 || img.getHeight()>400)
+           { //if the image is large, divide it in half
+            Image image = (img.getScaledInstance((img.getWidth()/2),(img.getHeight()/2),1)); //reduce the size of the image
+            searchGuiList(tabBox.getSelectedIndex()).getFrame().setIcon(new ImageIcon(image));
+           }
+           else{
+            searchGuiList(tabBox.getSelectedIndex()).getFrame().setIcon(new ImageIcon(img));
+           }
+        }
+        searchGuiList(tabBox.getSelectedIndex()).getInfoBox().setText(info); 
+        searchGuiList(tabBox.getSelectedIndex()).getTitle().setText(title);
     }
     
     public void setEmptyEventGUI()
     {
-           infoBox.setText("");
-           Title.setText("");
-           frame.setIcon(null);
+        removeAllGuiEvents();
+        /* Build the tab GUI */
+        /*********************************************************************************************************************************************************************/
+        
+        javax.swing.JPanel tabInterface1 = new javax.swing.JPanel(); 
+        javax.swing.JLabel frame1 = new javax.swing.JLabel();
+        javax.swing.JTextField title1 = new javax.swing.JTextField();
+        javax.swing.JTextArea infoBox1 = new javax.swing.JTextArea();
+        javax.swing.JScrollPane jScrollPane2 = new javax.swing.JScrollPane();
+        
+        title1.setEditable(false);
+        title1.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(0, 51, 153)));
+
+        infoBox1.setEditable(false);
+        infoBox1.setColumns(20);
+        infoBox1.setRows(5);
+        infoBox1.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(0, 51, 153)));
+        infoBox1.setLineWrap(true);
+        infoBox1.setWrapStyleWord(true);
+        jScrollPane2.setViewportView(infoBox1);
+        
+        javax.swing.GroupLayout tabInterfaceLayout = new javax.swing.GroupLayout(tabInterface1);
+        tabInterface1.setLayout(tabInterfaceLayout);
+        tabInterfaceLayout.setHorizontalGroup(
+            tabInterfaceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tabInterfaceLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(tabInterfaceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(tabInterfaceLayout.createSequentialGroup()
+                        .addComponent(title1, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 163, Short.MAX_VALUE))
+                    .addComponent(frame1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 605, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        tabInterfaceLayout.setVerticalGroup(
+            tabInterfaceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tabInterfaceLayout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addComponent(title1, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(tabInterfaceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(tabInterfaceLayout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 436, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(tabInterfaceLayout.createSequentialGroup()
+                        .addComponent(frame1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(52, 52, 52))))
+        );
+        pack();
+           
+        tabBox.addTab("", tabInterface1); //add the tab
+        guiEvent currentTab = new guiEvent(tabBox.getSelectedIndex(), frame1, title1, infoBox1); //make an instance of a tabbed gui Event
+        addToGuiList(currentTab); //add the guiEvent to the list
+        
+        // Set the GUI components to be empty
+        searchGuiList(tabBox.getSelectedIndex()).getTitle().setText("");
+        searchGuiList(tabBox.getSelectedIndex()).getInfoBox().setText("");
+        searchGuiList(tabBox.getSelectedIndex()).getFrame().setIcon(null);   
     }
 /*********************************************************************************************************************************************************************/
       
@@ -924,13 +1104,12 @@ public class timelineGUI extends javax.swing.JFrame {
         newButton.setVisible(false);
         openButton.setVisible(false);
         buildSlider();
-         
     }
     
-    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-     *  Build a new timeline and put it in the Timelines directory (build this directory if it     *
-     *  does not yet exist) and create an array of the information in the timelinefile              *
-     * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+     *  Build a new timeline and put it in the Timelines directory (build this directory if it       *
+     *  does not yet exist) and create a doubly linked list of the information in the timeline file  *
+     * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
     private void buildNewTimeline()
     {
@@ -1028,15 +1207,12 @@ public class timelineGUI extends javax.swing.JFrame {
         Timeline.setVisible(true);
         Edit.setVisible(true);
         Search.setVisible(true);
-        Title.setVisible(true);
         TitleLabel.setVisible(true);
         YearLabel.setVisible(true);
-        infoBox.setVisible(true);
-        frame.setVisible(true);
         editPhoto.setVisible(true);
         yearChoice.setVisible(true);
-         jScrollPane1.setVisible(true);
-        
+        tabBox.setVisible(true);
+        addTab.setVisible(true);
         
         //build the JSlider GUI with one less than the array length accounting for index[0]
         Timeline.setMaximum(arrLength);
@@ -1044,8 +1220,7 @@ public class timelineGUI extends javax.swing.JFrame {
 
         Publish.setVisible(false); //hide
 
-        infoBox.setLineWrap(true); //force the info to wrap nicely
-        infoBox.setWrapStyleWord(true);
+
         System.out.println("GUI timeline created");
     }
     
@@ -1122,6 +1297,7 @@ public class timelineGUI extends javax.swing.JFrame {
     }
     private void printList()
     {
+        System.out.print("Event List: ");
         Event currentEvent = head;
         if(currentEvent == tail)
         {
@@ -1136,6 +1312,214 @@ public class timelineGUI extends javax.swing.JFrame {
             }
             System.out.print(tail.getTitle());
         }
+        System.out.println();
+    }
+    
+    private void buildTabs(String title, String info, BufferedImage img)
+    {
+        
+        /* Build the tab GUI */
+        /*********************************************************************************************************************************************************************/
+        
+        javax.swing.JPanel tabInterface1 = new javax.swing.JPanel(); 
+        javax.swing.JLabel frame1 = new javax.swing.JLabel();
+        javax.swing.JTextField title1 = new javax.swing.JTextField();
+        javax.swing.JTextArea infoBox1 = new javax.swing.JTextArea();
+        javax.swing.JScrollPane jScrollPane2 = new javax.swing.JScrollPane();
+        
+        title1.setEditable(false);
+        title1.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(0, 51, 153)));
+
+        infoBox1.setEditable(false);
+        infoBox1.setColumns(20);
+        infoBox1.setRows(5);
+        infoBox1.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(0, 51, 153)));
+        infoBox1.setLineWrap(true);
+        infoBox1.setWrapStyleWord(true);
+        jScrollPane2.setViewportView(infoBox1);
+        
+        javax.swing.GroupLayout tabInterfaceLayout = new javax.swing.GroupLayout(tabInterface1);
+        tabInterface1.setLayout(tabInterfaceLayout);
+        tabInterfaceLayout.setHorizontalGroup(
+            tabInterfaceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tabInterfaceLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(tabInterfaceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(tabInterfaceLayout.createSequentialGroup()
+                        .addComponent(title1, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 163, Short.MAX_VALUE))
+                    .addComponent(frame1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 605, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        tabInterfaceLayout.setVerticalGroup(
+            tabInterfaceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tabInterfaceLayout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addComponent(title1, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(tabInterfaceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(tabInterfaceLayout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 436, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(tabInterfaceLayout.createSequentialGroup()
+                        .addComponent(frame1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(52, 52, 52))))
+        );
+        pack();
+        
+        tabBox.addTab(title, tabInterface1); //add the tab
+        guiEvent currentTab = new guiEvent(tabBox.getSelectedIndex(), frame1, title1, infoBox1); //make an instance of a tabbed gui Event
+        addToGuiList(currentTab); //add the guiEvent to the list
+        
+        title1.setText(title); //dynamically fill each tab with the required information
+        infoBox1.setText(info);
+        if(img != null) //if the image is not null
+            {// Make a JLabel that will contain an ImageIcon object.  The ImageIcon object takes a Buffered Image as parameters
+               if(img.getWidth()>400 || img.getHeight()>400)
+               { //if the image is large, divide it in half
+                Image image = (img.getScaledInstance((img.getWidth()/2),(img.getHeight()/2),1)); //reduce the size of the image
+                frame1.setIcon(new ImageIcon(image));
+               }
+               else{
+                frame1.setIcon(new ImageIcon(img));
+               }
+            }
+    }
+    
+    private void addToGuiList(guiEvent e){
+        guiEvent currentEvent = guiHead;
+        System.out.println("Adding tab at index" + " [" + e.getIndex() + "] to the list");
+        System.out.println("Title: " + e.getTitle());
+        System.out.println("Info: " + e.getInfoBox());
+        System.out.println("Frame: " + e.getFrame());
+        //if there is nothing in the list yet, make the head
+        if(currentEvent == null) 
+        {
+            System.out.println("Adding the first guiEvent");
+            guiHead = guiTail = e;
+        }
+        else if(e.getIndex() < currentEvent.getIndex()) // Insert before head
+        {
+            System.out.println("Inserting new guiEvent before the head");
+            e.setLast(guiTail);
+            e.setNext(guiHead);
+            guiHead = e;
+        }
+        else if(e.getIndex() > guiTail.getIndex()) // Insert after tail
+        {
+            System.out.println("Inserting new guiEvent after the tail");
+            e.setNext(guiHead);
+            e.setLast(guiTail);
+            e.getLast().setNext(e);
+            guiHead.setLast(e);
+            guiTail = e; 
+           System.out.println(searchGuiList(e.getIndex()) + " was successfully added to the list");
+        }
+        else
+        {
+            // ELSE if we are inserting this event somewhere in the middle of the list
+            System.out.println("Inserting new guiEvent somewhere in the middle of the list");
+            while ( currentEvent.getIndex() < e.getIndex() ) 
+            {
+                currentEvent = currentEvent.getNext();
+            }
+            e.setNext(currentEvent);
+            e.setLast(currentEvent.getLast());
+            e.getLast().setNext(e);
+            currentEvent.setLast(e);
+        }
+        
+        
+    }
+    private guiEvent searchGuiList(int index)
+    {
+        System.out.println("The user has chosen index: " + index);
+        guiEvent currentEvent = guiHead;
+
+        //If the list only has one item in it AND it is the one we are indexing
+        if( currentEvent.equals(guiTail) && index == currentEvent.getIndex() )
+        {
+            System.out.println("The list has only one item in it");
+            return currentEvent;
+        }
+        
+        //Search through the list
+        do 
+        {
+       
+        
+            if(currentEvent.getIndex() == index) 
+            {
+                System.out.println("checking index " + currentEvent.getIndex() );
+                return currentEvent;
+            }
+            else 
+            {
+                System.out.println( "Moving on to index: " + currentEvent.getNext().getIndex() );
+                currentEvent = currentEvent.getNext();
+            }
+        }  while( !( currentEvent.equals(guiHead) ) );
+        
+        //ELSE there is nothing in the list or the item requested was not found
+        System.out.println("The event requested was not found");
+        return null;
+    }
+    private void removeAllGuiEvents()
+    {
+        // Remove all excess tabs from the GUI
+        if(guiHead != null)
+        {
+            if(tabBox.getTabCount() == 1) //if there is only one tab
+            {
+                tabBox.removeTabAt(0); //remove it
+            }
+            else { //else if there are several tabs to remove
+                for(int i = 0;i<=tabBox.getTabCount();i++)
+                {
+
+                    tabBox.removeTabAt(i);  //loop through the list removing extra tabs that may bleed over a previous instance of the GUI
+                }
+            }
+
+            guiHead = guiTail = null;
+        }
+        
+    }
+    private void enableAllTabs(boolean onOroff)
+    {
+        //disable all other tabs, other than the one we are currently editing
+        printGuiList();
+        for(int i = 0; i < tabBox.getTabCount(); i++)
+        { //loop through the tab gui list, if the tab is not the one we are editing disable it
+            
+            
+            if( i != tabBox.getSelectedIndex() )
+            {
+                System.out.println("Disabled tab at index:" + i);
+                tabBox.setEnabledAt(i, onOroff);
+            }
+                
+        }
+    }
+    private void printGuiList()
+    {
+        guiEvent currentEvent = guiHead;
+        if(currentEvent == guiTail)
+        {
+            System.out.print(currentEvent + "[" + currentEvent.getIndex() + "]");
+        }
+        else
+        {
+            while(currentEvent!=guiTail)
+            {
+                System.out.print(currentEvent + "[" + currentEvent.getIndex() + "]" + " -> ");
+                currentEvent = currentEvent.getNext();
+            }
+            System.out.print(currentEvent + "[" + currentEvent.getIndex() + "]");
+            System.out.println();
+        }
     }
 /*********************************************************************************************************************************************************************/
 
@@ -1144,16 +1528,13 @@ public class timelineGUI extends javax.swing.JFrame {
     private javax.swing.JButton Publish;
     private javax.swing.JTextField Search;
     private javax.swing.JSlider Timeline;
-    private javax.swing.JTextField Title;
     private javax.swing.JLabel TitleLabel;
     private javax.swing.JLabel YearLabel;
+    private javax.swing.JButton addTab;
     private javax.swing.JButton editPhoto;
     private javax.swing.JTextField endYearField;
     private javax.swing.JLabel endYearPrompt;
     private javax.swing.JLabel errMsg;
-    private javax.swing.JLabel frame;
-    private javax.swing.JTextArea infoBox;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField lengthField;
     private javax.swing.JLabel lengthPrompt;
     private javax.swing.JTextField nameField;
@@ -1161,6 +1542,7 @@ public class timelineGUI extends javax.swing.JFrame {
     private javax.swing.JButton newButton;
     private javax.swing.JButton openButton;
     private javax.swing.JButton submitButton;
+    private javax.swing.JTabbedPane tabBox;
     private javax.swing.JLabel titleText;
     private javax.swing.JButton yearChoice;
     private javax.swing.JButton yearChoiceNew;
