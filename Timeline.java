@@ -24,9 +24,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-
-
-public class timelineGUI extends javax.swing.JFrame {
+public class Timeline extends javax.swing.JFrame 
+{
 
     private String currentTitle;
     private String currentInfoBox;
@@ -51,7 +50,7 @@ public class timelineGUI extends javax.swing.JFrame {
     /**
      * Creates new form timelineGUI
      */
-    public timelineGUI(){
+    public Timeline(){
         initComponents();
         
         //Make all new timeline components invisible to begin with
@@ -392,7 +391,8 @@ public class timelineGUI extends javax.swing.JFrame {
         nameField.setVisible(true);
     }                                         
 
-    private void TimelineStateChanged(javax.swing.event.ChangeEvent evt) {                                      
+    private void TimelineStateChanged(javax.swing.event.ChangeEvent evt) 
+    {                                      
         int value=Timeline.getValue();
         int year;
         if(era.equals("C.E.")) //if the timeline includes both the C.E. era and B.C.E era
@@ -414,9 +414,7 @@ public class timelineGUI extends javax.swing.JFrame {
             YearLabel.setText(year + " B.C.E.");
         }
         
-        
-        Event e = searchList(value);
-        
+        Event e = searchList(value);       
         if( e != null ) 
         {
             removeAllGuiEvents();
@@ -671,11 +669,6 @@ public class timelineGUI extends javax.swing.JFrame {
         printGuiList();
     }                                      
 /*********************************************************************************************************************************************************************/
-    
-    
-    
-/*********************************************************************************************************************************************************************/
-    
 /*********************************************************************************************************************************************************************/
     private void editPhoto()        
     {
@@ -936,7 +929,6 @@ public class timelineGUI extends javax.swing.JFrame {
         removeAllGuiEvents();
         /* Build the tab GUI */
         /*********************************************************************************************************************************************************************/
-        
         javax.swing.JPanel tabInterface1 = new javax.swing.JPanel(); 
         javax.swing.JLabel frame1 = new javax.swing.JLabel();
         javax.swing.JTextField title1 = new javax.swing.JTextField();
@@ -983,8 +975,7 @@ public class timelineGUI extends javax.swing.JFrame {
                         .addComponent(frame1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(52, 52, 52))))
         );
-        pack();
-           
+        pack();   
         tabBox.addTab("", tabInterface1); //add the tab
         guiEvent currentTab = new guiEvent(tabBox.getSelectedIndex(), frame1, title1, infoBox1); //make an instance of a tabbed gui Event
         addToGuiList(currentTab); //add the guiEvent to the list
@@ -1010,20 +1001,20 @@ public class timelineGUI extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(timelineGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Timeline.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(timelineGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Timeline.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(timelineGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Timeline.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(timelineGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Timeline.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
         public void run() {
-              new timelineGUI().setVisible(true); 
+              new Timeline().setVisible(true); 
             }
         });
     }
@@ -1226,34 +1217,34 @@ public class timelineGUI extends javax.swing.JFrame {
     
     private Event searchList(int index)
     {
-        System.out.println("The user has chosen index:" + index);
+        System.out.println("The user has chosen index: " + index);
         Event currentEvent = head;
+        printList();
+        System.out.println(currentEvent.getIndex());
 
-        // IF there is at least one item in the list
-        if(currentEvent != null)
+
+        //If the list only has one item in it AND it is the one we are indexing it
+        if( currentEvent.equals(tail) && index == currentEvent.getIndex() )
         {
-            //If the list only has one item in it AND it is the one we are indexing
-            if( currentEvent.equals(tail) && index == currentEvent.getIndex() )
+            System.out.println("The list has only one item in it and we found it");
+            return currentEvent;
+        }
+        //Search through the list 
+        while( !(currentEvent.equals(tail)) )
+        {
+            if(currentEvent.getIndex() == index) 
             {
-                System.out.println("The list has only one item in it");
+                currentEvent.printAll();
                 return currentEvent;
             }
-            //Search through the list 
-            while( !(currentEvent.equals(tail)) )
+            else 
             {
-                if(currentEvent.getIndex() == index) 
-                {
-                    currentEvent.printAll();
-                    return currentEvent;
-                }
-                else 
-                {
-                    currentEvent = currentEvent.getNext();
-                }
+                currentEvent = currentEvent.getNext();
             }
         }
+        
         //ELSE there is nothing in the list or the item requested was not found
-        System.err.println("The event requested was not found");
+        System.out.println("The event requested was not found");
         return null;
     }
     
@@ -1294,6 +1285,7 @@ public class timelineGUI extends javax.swing.JFrame {
             currentEvent.setLast(e);
         }
         printList();
+        
     }
     private void printList()
     {
@@ -1313,6 +1305,8 @@ public class timelineGUI extends javax.swing.JFrame {
             System.out.print(tail.getTitle());
         }
         System.out.println();
+        System.out.println("The head is pointing to " + head.getTitle());
+        System.out.println("The tail is pointing to " + tail.getTitle());
     }
     
     private void buildTabs(String title, String info, BufferedImage img)
@@ -1446,21 +1440,24 @@ public class timelineGUI extends javax.swing.JFrame {
         }
         
         //Search through the list
-        do 
+        if( !(guiHead.equals(guiTail)) ) //check to see if there is at least more than 1 event
+            do 
+            {
+                if(currentEvent.getIndex() == index) 
+                {
+                    System.out.println("checking index " + currentEvent.getIndex() );
+                    return currentEvent;
+                }
+                else 
+                {
+                    System.out.println( "Moving on to index: " + currentEvent.getNext().getIndex() );
+                    currentEvent = currentEvent.getNext();
+                }
+            }  while( !( currentEvent.equals(guiHead) ) );
+        else
         {
-       
-        
-            if(currentEvent.getIndex() == index) 
-            {
-                System.out.println("checking index " + currentEvent.getIndex() );
-                return currentEvent;
-            }
-            else 
-            {
-                System.out.println( "Moving on to index: " + currentEvent.getNext().getIndex() );
-                currentEvent = currentEvent.getNext();
-            }
-        }  while( !( currentEvent.equals(guiHead) ) );
+            return currentEvent; //if there is only 1 item in the list return that one
+        }
         
         //ELSE there is nothing in the list or the item requested was not found
         System.out.println("The event requested was not found");
@@ -1476,12 +1473,14 @@ public class timelineGUI extends javax.swing.JFrame {
                 tabBox.removeTabAt(0); //remove it
             }
             else { //else if there are several tabs to remove
-                for(int i = 0;i<=tabBox.getTabCount();i++)
+                for(int i = 0;i<tabBox.getTabCount();i++)
                 {
 
                     tabBox.removeTabAt(i);  //loop through the list removing extra tabs that may bleed over a previous instance of the GUI
                 }
             }
+            System.out.println("There are now: " + tabBox.getTabCount() + " tabs");
+            
 
             guiHead = guiTail = null;
         }
