@@ -24,6 +24,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+
+
 public class Timeline extends javax.swing.JFrame 
 {
 
@@ -424,27 +426,30 @@ public class Timeline extends javax.swing.JFrame
             if(e.getNext() != null) //if the list has more than one item in it
             {
                 System.out.println("There is more than one event in the list");
-                //If this particular year contains one or more events start building addtional GUI tabs
-                if(e.getNext().getIndex() == e.getIndex()) //if the next item in the list also has the same index
+                int index = e.getIndex();
+               //If this particular year contains one or more events start building addtional GUI tabs
+                if(e.getNext().getIndex() == index) //if the next item in the list also has the same index
                 {
-                    while(e.getNext().getIndex() == e.getIndex()) //loop through the list building tabs as needed
+                    e = e.getNext();//move to the next item in the list
+                     //loop through the list building tabs as needed
+                    do
                     {
-                        System.out.println("Building already existing tab for" + e.getTitle());
+                        System.out.println("Building already existing tab for " + e.getTitle());
                         buildTabs(e.getTitle(), e.getInfo(), e.getImage());
                         e = e.getNext();
                     }
+                    while(e.getIndex() == index); //while the current item still has the same index
                 }
                 else
                 {
                     System.out.println("There is only one tab for this event");
                 }
             }
-            System.out.println("Loading Event... \""+ e.getTitle()+"\"");
             
-            if(e.getImage()==null)
+            /*if(e.getImage()==null)
             {
                 searchGuiList(tabBox.getSelectedIndex()).getFrame().setIcon(null);
-            }
+            }*/
         }
         else
         {
@@ -516,11 +521,8 @@ public class Timeline extends javax.swing.JFrame
         
         //set the current titles to what is already saved in order to make decisions regarding what to update in the .txt file while editing
         
-        System.out.println(tabBox.getSelectedIndex());
-        printGuiList();
         guiEvent currentEvent = searchGuiList(tabBox.getSelectedIndex());
-        System.out.println(currentEvent);
-        currentTitle = searchGuiList(1).getTitle().getText();
+        currentTitle = searchGuiList(tabBox.getSelectedIndex()).getTitle().getText();
         currentInfoBox = searchGuiList(tabBox.getSelectedIndex()).getInfoBox().getText();
 
         
@@ -537,13 +539,14 @@ public class Timeline extends javax.swing.JFrame
         searchGuiList(tabBox.getSelectedIndex()).getTitle().setEditable(true); //set the textAreas to be editable
         searchGuiList(tabBox.getSelectedIndex()).getInfoBox().setEditable(true);
         
+        
         System.out.println("editable? = " + searchGuiList(tabBox.getSelectedIndex()).getInfoBox().isEditable());
     }                                    
 
     private void PublishActionPerformed(java.awt.event.ActionEvent evt) {                                        
 
         //if any of the features are not null
-        if(searchList(Timeline.getValue()) != null)
+        if( !(currentTitle.equals("") ) && !(currentInfoBox.equals("")) )
         {
             System.out.println("Editing an existing event...");
 
@@ -603,8 +606,6 @@ public class Timeline extends javax.swing.JFrame
 
     private void addTabActionPerformed(java.awt.event.ActionEvent evt) {                                       
         
-   
-        
         /* Build the tab GUI */
         /*********************************************************************************************************************************************************************/
         
@@ -662,11 +663,9 @@ public class Timeline extends javax.swing.JFrame
         tabBox.addTab("", tabInterface1); //add a tab
         System.out.println("there are now " + tabBox.getTabCount() + " tabs");
         tabBox.setSelectedIndex(tabBox.getTabCount()-1); //set the currently selected tab to the newly added one
-        
         guiEvent currentTab = new guiEvent(tabBox.getSelectedIndex(), frame1, title1, infoBox1); //make an instance of a tabbed gui Event
         System.out.println();
         addToGuiList(currentTab); //add the guiEvent to the list
-        printGuiList();
     }                                      
 /*********************************************************************************************************************************************************************/
 /*********************************************************************************************************************************************************************/
@@ -1073,8 +1072,8 @@ public class Timeline extends javax.swing.JFrame
                 }
                 catch (IOException e) {System.err.println("The image "+stringImg+" could not be found");}
                 
-                Event e = new Event(index,title,info,img);
-                addToList(e);  
+                Event event = new Event(index,title,info,img);
+                addToList(event);  
             }
         }
         catch(NullPointerException e)
@@ -1220,20 +1219,24 @@ public class Timeline extends javax.swing.JFrame
         System.out.println("The user has chosen index: " + index);
         Event currentEvent = head;
         printList();
-        System.out.println(currentEvent.getIndex());
-
-
-        //If the list only has one item in it AND it is the one we are indexing it
-        if( currentEvent.equals(tail) && index == currentEvent.getIndex() )
+        
+        if(currentEvent.getIndex() == index)
         {
-            System.out.println("The list has only one item in it and we found it");
+            System.out.println("The desired event is the head.");
             return currentEvent;
         }
+        else if(tail.getIndex() == index)
+        {
+            System.out.println("the desired event is the tail.");
+            return tail;
+        }    
         //Search through the list 
-        while( !(currentEvent.equals(tail)) )
+        currentEvent = currentEvent.getNext();
+        do
         {
             if(currentEvent.getIndex() == index) 
             {
+                System.out.println("We found the event we were looking for!");
                 currentEvent.printAll();
                 return currentEvent;
             }
@@ -1241,7 +1244,7 @@ public class Timeline extends javax.swing.JFrame
             {
                 currentEvent = currentEvent.getNext();
             }
-        }
+        }while( !(currentEvent.equals(tail)) );
         
         //ELSE there is nothing in the list or the item requested was not found
         System.out.println("The event requested was not found");
@@ -1265,7 +1268,7 @@ public class Timeline extends javax.swing.JFrame
             e.setNext(head);
             head = e;
         }
-        else if(e.getIndex() > tail.getIndex()) // Insert after tail
+        else if(e.getIndex() >= tail.getIndex()) // Insert after tail
         {
             e.setNext(head);
             e.setLast(tail);
@@ -1275,10 +1278,13 @@ public class Timeline extends javax.swing.JFrame
         else
         {
             // ELSE if we are inserting this event somewhere in the middle of the list
-            while ( currentEvent.getIndex() < e.getIndex() ) 
+            while ( currentEvent.getIndex() <= e.getIndex() ) 
             {
                 currentEvent = currentEvent.getNext();
             }
+            System.out.println("The current event is: " + currentEvent.getTitle() );
+            System.out.println("The next event in the list is: " + currentEvent.getNext().getTitle());
+            System.out.println("the previous event in the list is: " + currentEvent.getLast().getTitle() );
             e.setNext(currentEvent);
             e.setLast(currentEvent.getLast());
             e.getLast().setNext(e);
@@ -1364,35 +1370,39 @@ public class Timeline extends javax.swing.JFrame
         pack();
         
         tabBox.addTab(title, tabInterface1); //add the tab
-        guiEvent currentTab = new guiEvent(tabBox.getSelectedIndex(), frame1, title1, infoBox1); //make an instance of a tabbed gui Event
-        addToGuiList(currentTab); //add the guiEvent to the list
-        
         title1.setText(title); //dynamically fill each tab with the required information
         infoBox1.setText(info);
         if(img != null) //if the image is not null
-            {// Make a JLabel that will contain an ImageIcon object.  The ImageIcon object takes a Buffered Image as parameters
-               if(img.getWidth()>400 || img.getHeight()>400)
-               { //if the image is large, divide it in half
-                Image image = (img.getScaledInstance((img.getWidth()/2),(img.getHeight()/2),1)); //reduce the size of the image
-                frame1.setIcon(new ImageIcon(image));
-               }
-               else{
-                frame1.setIcon(new ImageIcon(img));
-               }
-            }
+        {// Make a JLabel that will contain an ImageIcon object.  The ImageIcon object takes a Buffered Image as parameters
+           if(img.getWidth()>400 || img.getHeight()>400)
+           { //if the image is large, divide it in half
+            Image image = (img.getScaledInstance((img.getWidth()/2),(img.getHeight()/2),1)); //reduce the size of the image
+            frame1.setIcon(new ImageIcon(image));
+           }
+           else{
+            frame1.setIcon(new ImageIcon(img));
+           }
+        }
+        System.out.println("Added Tab " + tabBox.getTitleAt((tabBox.getTabCount()-1)) + " at index " + (tabBox.getTabCount()-1) + " to the GUI." );
+        guiEvent currentTab = new guiEvent(tabBox.getTabCount()-1, frame1, title1, infoBox1); //make an instance of a tabbed gui Event
+        addToGuiList(currentTab); //add the guiEvent to the list
+        
+        
     }
     
-    private void addToGuiList(guiEvent e){
+    private void addToGuiList(guiEvent e)
+    {
         guiEvent currentEvent = guiHead;
         System.out.println("Adding tab at index" + " [" + e.getIndex() + "] to the list");
-        System.out.println("Title: " + e.getTitle());
-        System.out.println("Info: " + e.getInfoBox());
+        System.out.println("Title: " + e.getTitle().getText());
+        System.out.println("Info: " + e.getInfoBox().getText());
         System.out.println("Frame: " + e.getFrame());
         //if there is nothing in the list yet, make the head
         if(currentEvent == null) 
         {
             System.out.println("Adding the first guiEvent");
             guiHead = guiTail = e;
+            printGuiList();
         }
         else if(e.getIndex() < currentEvent.getIndex()) // Insert before head
         {
@@ -1400,6 +1410,7 @@ public class Timeline extends javax.swing.JFrame
             e.setLast(guiTail);
             e.setNext(guiHead);
             guiHead = e;
+            printGuiList();
         }
         else if(e.getIndex() > guiTail.getIndex()) // Insert after tail
         {
@@ -1408,11 +1419,12 @@ public class Timeline extends javax.swing.JFrame
             e.setLast(guiTail);
             e.getLast().setNext(e);
             guiHead.setLast(e);
-            guiTail = e; 
-           System.out.println(searchGuiList(e.getIndex()) + " was successfully added to the list");
+            guiTail = e;
+            printGuiList();
         }
         else
         {
+            System.out.println("WHY ARE YOU HERE????");
             // ELSE if we are inserting this event somewhere in the middle of the list
             System.out.println("Inserting new guiEvent somewhere in the middle of the list");
             while ( currentEvent.getIndex() < e.getIndex() ) 
@@ -1423,9 +1435,8 @@ public class Timeline extends javax.swing.JFrame
             e.setLast(currentEvent.getLast());
             e.getLast().setNext(e);
             currentEvent.setLast(e);
-        }
-        
-        
+            printGuiList();
+        }    
     }
     private guiEvent searchGuiList(int index)
     {
@@ -1465,26 +1476,38 @@ public class Timeline extends javax.swing.JFrame
     }
     private void removeAllGuiEvents()
     {
-        // Remove all excess tabs from the GUI
+        
+        
+        //Remove all excess tabs from the GUI
+        System.out.println("Removing all excess tabs");
         if(guiHead != null)
         {
             if(tabBox.getTabCount() == 1) //if there is only one tab
             {
+                System.out.println("Removing the one tab");
                 tabBox.removeTabAt(0); //remove it
             }
-            else { //else if there are several tabs to remove
-                for(int i = 0;i<tabBox.getTabCount();i++)
-                {
-
-                    tabBox.removeTabAt(i);  //loop through the list removing extra tabs that may bleed over a previous instance of the GUI
-                }
-            }
-            System.out.println("There are now: " + tabBox.getTabCount() + " tabs");
-            
-
-            guiHead = guiTail = null;
-        }
         
+            else 
+            { //else if there are several tabs to remove
+                System.out.println("Removing tabs");
+                /*System.out.println("There are currently: " + tabBox.getTabCount() + " tabs");
+                System.out.println("1. " + tabBox.getTitleAt(0));
+                System.out.println("2. " + tabBox.getTitleAt(1));
+                System.out.println("3. " + tabBox.getTitleAt(2));
+                */
+                tabBox.removeAll();
+            }
+            
+            
+            System.out.println("There are now: " + tabBox.getTabCount() + " tabs");
+          
+            guiHead.setNext(null);
+            guiHead.setLast(null);
+            guiTail.setNext(null);
+            guiTail.setLast(null);
+            guiHead = guiTail = null;
+        }    
     }
     private void enableAllTabs(boolean onOroff)
     {
@@ -1507,18 +1530,20 @@ public class Timeline extends javax.swing.JFrame
         guiEvent currentEvent = guiHead;
         if(currentEvent == guiTail)
         {
-            System.out.print(currentEvent + "[" + currentEvent.getIndex() + "]");
+            System.out.println(currentEvent.getTitle().getText() + "[" + currentEvent.getIndex() + "]");
         }
         else
         {
             while(currentEvent!=guiTail)
             {
-                System.out.print(currentEvent + "[" + currentEvent.getIndex() + "]" + " -> ");
+                System.out.print(currentEvent.getTitle().getText() + "[" + currentEvent.getIndex() + "]" + " -> ");
                 currentEvent = currentEvent.getNext();
             }
-            System.out.print(currentEvent + "[" + currentEvent.getIndex() + "]");
+            System.out.print(currentEvent.getTitle().getText() + "[" + currentEvent.getIndex() + "]");
             System.out.println();
         }
+        System.out.println("The tabHead is pointing to " + guiHead.getTitle().getText());
+        System.out.println("The tabTail is pointing to " + guiTail.getTitle().getText());
     }
 /*********************************************************************************************************************************************************************/
 
