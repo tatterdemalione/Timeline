@@ -31,8 +31,6 @@ public class Timeline extends javax.swing.JFrame
 
     private String currentTitle;
     private String currentInfoBox;
- 
-    
     
     private int endYear;
     private int arrLength;
@@ -415,47 +413,49 @@ public class Timeline extends javax.swing.JFrame
             year = (endYear + arrLength) - value;
             YearLabel.setText(year + " B.C.E.");
         }
-        
-        Event e = searchList(value);       
-        if( e != null ) 
+        if(head != null) //if the list is not empty
         {
-            removeAllGuiEvents();
-            buildTabs(e.getTitle(), e.getInfo(), e.getImage()); //build the first tab
-            System.out.println("Setting existing event GUI");
-            
-            if(e.getNext() != null) //if the list has more than one item in it
+            Event e = searchList(value);       
+            if( e != null ) 
             {
-                System.out.println("There is more than one event in the list");
-                int index = e.getIndex();
-               //If this particular year contains one or more events start building addtional GUI tabs
-                if(e.getNext().getIndex() == index) //if the next item in the list also has the same index
+                removeAllGuiEvents();
+                buildTabs(e.getTitle(), e.getInfo(), e.getImage()); //build the first tab
+                System.out.println("Setting existing event GUI for " + e.getTitle());
+
+                if(e.getNext() != null) //if the list has more than one item in it
                 {
-                    e = e.getNext();//move to the next item in the list
-                     //loop through the list building tabs as needed
-                    do
+                    System.out.println("There may be more than one tab needed");
+                    int index = e.getIndex();
+                   //If this particular year contains one or more events start building addtional GUI tabs
+                    if(e.getNext().getIndex() == index) //if the next item in the list also has the same index
                     {
-                        System.out.println("Building already existing tab for " + e.getTitle());
-                        buildTabs(e.getTitle(), e.getInfo(), e.getImage());
-                        e = e.getNext();
+                        e = e.getNext();//move to the next item in the list
+                         //loop through the list building tabs as needed
+                        do
+                        {
+                            System.out.println("Building tab for already existing event " + e.getTitle());
+                            buildTabs(e.getTitle(), e.getInfo(), e.getImage());
+                            e = e.getNext();
+                        }
+                        while(e.getIndex() == index && (!(e.equals(head)))); //while the current item still has the same index and we have not looped back to the 
                     }
-                    while(e.getIndex() == index); //while the current item still has the same index
+                    else
+                    {
+                        System.out.println("There is only one tab for this event");
+                    }
                 }
-                else
+
+                /*if(e.getImage()==null)
                 {
-                    System.out.println("There is only one tab for this event");
-                }
+                    searchGuiList(tabBox.getSelectedIndex()).getFrame().setIcon(null);
+                }*/
             }
-            
-            /*if(e.getImage()==null)
+            else
             {
-                searchGuiList(tabBox.getSelectedIndex()).getFrame().setIcon(null);
-            }*/
-        }
-        else
-        {
-            System.out.println("Setting Empty GUI");
-            setEmptyEventGUI();
-        }
+                System.out.println("Setting Empty GUI");
+                setEmptyEventGUI();
+            }
+        }   
     }                                     
 
     private void endYearFieldActionPerformed(java.awt.event.ActionEvent evt) {                                             
@@ -524,6 +524,8 @@ public class Timeline extends javax.swing.JFrame
         guiEvent currentEvent = searchGuiList(tabBox.getSelectedIndex());
         currentTitle = searchGuiList(tabBox.getSelectedIndex()).getTitle().getText();
         currentInfoBox = searchGuiList(tabBox.getSelectedIndex()).getInfoBox().getText();
+        System.out.println("The current title is: " + currentTitle);
+        System.out.println("The current info is: " + currentInfoBox);
 
         
         enableAllTabs(false);
@@ -546,7 +548,7 @@ public class Timeline extends javax.swing.JFrame
     private void PublishActionPerformed(java.awt.event.ActionEvent evt) {                                        
 
         //if any of the features are not null
-        if( !(currentTitle.equals("") ) && !(currentInfoBox.equals("")) )
+        if( !( currentTitle.equals("") ) || !( currentInfoBox.equals("") ) )
         {
             System.out.println("Editing an existing event...");
 
@@ -751,15 +753,23 @@ public class Timeline extends javax.swing.JFrame
                 
                 bw.write(br.readLine()+"\n"); 
                 //read the first line and write it to the temp file, in case by chance the year we want to edit is the length of the timeline
-
-                while(!(currentLine.equals( Integer.toString( Timeline.getValue() ) ) ) )
-                { //while the line does not have the current event's index
+                boolean flag = true;
+                while(flag)
+                { 
                     currentLine = br.readLine();
                     bw.write(currentLine+"\n"); //write the current line to the temp file
+                    if(currentLine.equals(Integer.toString(Timeline.getValue()) ) )    
+                    {//if the index is matched
+                        currentLine = br.readLine(); //read the title line that follows
+                        if(currentLine.equals(tabBox.getTitleAt(tabBox.getSelectedIndex()) ) )
+                        {// if the title also matches
+                            flag = false; //break out of the loop
+                        }
+                    }    
                 }
 
-                bw.write(br.readLine()+"\n"); //write the title
-                bw.write(br.readLine()+"\n"); //write the info
+                bw.write(currentLine + "\n"); //write the title
+                bw.write(br.readLine() + "\n"); //write the info
                 br.readLine(); //skip over the line with the photo
 
                 bw.write(imgName + "\n"); //write the image name to the temp file
@@ -796,7 +806,7 @@ public class Timeline extends javax.swing.JFrame
         System.out.println("Editing title");     
         File parentDir = new File("Timelines");
         File timelineFile = new File(parentDir, timelineName + ".txt"); //find the file to be written to
-        String currentLine="love";
+        String currentLine="placeholder";
         try
         {
             File tmp = File.createTempFile("tmp",".txt"); //make a temporary file
@@ -808,16 +818,29 @@ public class Timeline extends javax.swing.JFrame
             //read the first line and write it to the temp file, in case by chance the year we want to edit is the length of the timeline
             
             
-            while(!(currentLine.equals( Integer.toString( Timeline.getValue() ) ) ) )
-            { //while the line does not have the current event's index
+            boolean flag = true;
+            while(flag)
+            { 
                 currentLine = br.readLine();
                 bw.write(currentLine+"\n"); //write the current line to the temp file
+                if(currentLine.equals(Integer.toString(Timeline.getValue()) ) )    
+                {//if the index is matched
+                    currentLine = br.readLine(); //read the title line that follows
+                    if(currentLine.equals(tabBox.getTitleAt(tabBox.getSelectedIndex()) ) )
+                    {// if the title also matches
+                        flag = false; //break out of the loop
+                    }
+                    else
+                    {
+                        bw.write(currentLine+"\n");
+                    }
+                }    
             }
             
             br.readLine(); //read the line containing the title (skipping it)
             bw.write(searchGuiList(tabBox.getSelectedIndex()).getTitle().getText()+"\n"); //write the edited text to the temp file
             
-            searchList(currentYear).setTitle(searchGuiList(tabBox.getSelectedIndex()).getTitle().getText()); //update the list dynamically
+            editList(1);//update the list dynamically
 
              while ((currentLine = br.readLine()) != null) //read everthing after the title and write it to the temp file
              {
@@ -855,28 +878,42 @@ public class Timeline extends javax.swing.JFrame
             BufferedReader br = new BufferedReader(new FileReader(timelineFile)); 
             BufferedWriter bw = new BufferedWriter(new FileWriter(tmp));
 
+            
+
             bw.write(br.readLine()+"\n"); 
             //read the first line and write it to the temp file, in case by chance the year we want to edit is the length of the timeline
-
-            while(!(currentLine.equals( Integer.toString( Timeline.getValue() ) ) ) )
-            { //while the line does not have the current event's index
+            boolean flag = true;
+            while(flag)
+            { 
                 currentLine = br.readLine();
                 bw.write(currentLine+"\n"); //write the current line to the temp file
+                if(currentLine.equals(Integer.toString(Timeline.getValue()) ) )    
+                {//if the index is matched
+                    currentLine = br.readLine(); //read the title line that follows
+                    if(currentLine.equals(tabBox.getTitleAt(tabBox.getSelectedIndex()) ) )
+                    {// if the title also matches
+                        flag = false; //break out of the loop
+                    }
+                    else
+                    {
+                        bw.write(currentLine+"\n"); //wrong title, write the title to the file
+                    }
+                }
+                
             }
 
-            bw.write(br.readLine()+"\n"); //read the line containing the title and print it
+            bw.write(currentLine+"\n"); //read the line containing the title and write it to the file
             br.readLine(); //read the line containing the old info (skipping it)
             bw.write(searchGuiList(tabBox.getSelectedIndex()).getInfoBox().getText()+"\n"); //write the edited text to the temp file
             
-            searchList(currentYear).setInfo(searchGuiList(tabBox.getSelectedIndex()).getInfoBox().getText()); //update the list
+            editList(2); //edit the list dynamically 
+            while ((currentLine = br.readLine()) != null) //read everthing after the info and write it to the temp file
+            {
+                bw.write(currentLine+"\n");
+            }
 
-             while ((currentLine = br.readLine()) != null) //read everthing after the info and write it to the temp file
-             {
-              bw.write(currentLine+"\n");
-             }
-
-             bw.close(); //close the files
-             br.close();
+            bw.close(); //close the files
+            br.close();
 
             File oldFile = timelineFile; //make a copy of the old file
             if (oldFile.delete()) //delete the file, if successful rename the tmp file and make it the usable file
@@ -1041,13 +1078,17 @@ public class Timeline extends javax.swing.JFrame
         int ret = fileChooser.showDialog(null, "Open"); //creates a custom file chooser dialog with a custom "Open" button
         File timelineFile = null;
         
-        if(ret == fileChooser.APPROVE_OPTION) //if the button has been clicked, get the selected file
+        if(ret == fileChooser.APPROVE_OPTION) //if the open button has been clicked, get the selected file
         {
             String tempName = fileChooser.getName(fileChooser.getSelectedFile());
             timelineName = tempName.substring(0,( tempName.length()-4) ); //remove the .txt portion of the name
             System.out.println(timelineName);
             File parentDir = new File ("Timelines");
             timelineFile = new File(parentDir, timelineName+".txt");
+        }
+        else if(ret == fileChooser.CANCEL_OPTION)
+        {
+            return;
         }
         
         try
@@ -1225,27 +1266,31 @@ public class Timeline extends javax.swing.JFrame
             System.out.println("The desired event is the head.");
             return currentEvent;
         }
-        else if(tail.getIndex() == index)
-        {
+        
+        else if(tail.getIndex() == index && tail.getLast().getIndex() != index)
+        {//If the desired is the tail and there are no other events in that year preceding that event
             System.out.println("the desired event is the tail.");
             return tail;
-        }    
+        }
+        
         //Search through the list 
         currentEvent = currentEvent.getNext();
-        do
+        if(currentEvent != null)
         {
-            if(currentEvent.getIndex() == index) 
+            do
             {
-                System.out.println("We found the event we were looking for!");
-                currentEvent.printAll();
-                return currentEvent;
-            }
-            else 
-            {
-                currentEvent = currentEvent.getNext();
-            }
-        }while( !(currentEvent.equals(tail)) );
-        
+                if(currentEvent.getIndex() == index) 
+                {
+                    System.out.println("We found the event we were looking for!");
+                    currentEvent.printAll();
+                    return currentEvent;
+                }
+                else 
+                {
+                    currentEvent = currentEvent.getNext();
+                }
+            }while( !(currentEvent.equals(tail)) );
+        }    
         //ELSE there is nothing in the list or the item requested was not found
         System.out.println("The event requested was not found");
         return null;
@@ -1254,41 +1299,54 @@ public class Timeline extends javax.swing.JFrame
     private void addToList(Event e)
     {
         Event currentEvent = head;
-        System.out.println("Adding event " + e.getTitle() + " to the list");
+        System.out.println("Adding event " + e.getTitle() + " with index  " + e.getIndex() + " to the list");
         
         //if there is nothing in the list yet, make the head
         if(currentEvent == null) 
         {
-            System.out.println("Adding the first event");
+            System.out.println("Adding event " + e.getTitle() + " as the first event");
             head = tail = e;
+            
         }
         else if(e.getIndex() < currentEvent.getIndex()) // Insert before head
         {
-            e.setLast(tail);
+            System.out.println("Adding event " + e.getTitle() + " before the head");
+            e.setLast(tail); 
+            e.getLast().setNext(e);
+            head.setLast(e);
             e.setNext(head);
             head = e;
         }
         else if(e.getIndex() >= tail.getIndex()) // Insert after tail
         {
+            System.out.println("Adding event " + e.getTitle() + " after the tail");
             e.setNext(head);
             e.setLast(tail);
             e.getLast().setNext(e);
+            head.setLast(e);
             tail = e;
         }
         else
         {
             // ELSE if we are inserting this event somewhere in the middle of the list
+            System.out.println("Adding event " + e.getTitle() + " somewhere in the middle of the list");
             while ( currentEvent.getIndex() <= e.getIndex() ) 
             {
+                System.out.println("1");
                 currentEvent = currentEvent.getNext();
             }
             System.out.println("The current event is: " + currentEvent.getTitle() );
-            System.out.println("The next event in the list is: " + currentEvent.getNext().getTitle());
-            System.out.println("the previous event in the list is: " + currentEvent.getLast().getTitle() );
+            //System.out.println("The next event in the list is: " + currentEvent.getNext().getTitle());
+            //System.out.println("the previous event in the list is: " + currentEvent.getLast().getTitle() );
+            
             e.setNext(currentEvent);
+            System.out.println(e.getTitle() + "->" + e.getNext().getTitle());
             e.setLast(currentEvent.getLast());
+            System.out.println(e.getLast().getTitle() + "<-" + e.getTitle());
             e.getLast().setNext(e);
             currentEvent.setLast(e);
+            System.out.println("NEXT: " + e.getNext().getTitle());
+            System.out.println("LAST: " + e.getLast().getTitle());
         }
         printList();
         
@@ -1313,8 +1371,45 @@ public class Timeline extends javax.swing.JFrame
         System.out.println();
         System.out.println("The head is pointing to " + head.getTitle());
         System.out.println("The tail is pointing to " + tail.getTitle());
+        if(head.getNext() != null && tail.getNext() != null)
+        {
+            System.out.println("the head at next is pointing to " + head.getNext().getTitle());
+            System.out.println("the head at last is pointing to " + head.getLast().getTitle());
+            System.out.println("the tail at next is pointing to " + tail.getNext().getTitle());
+            System.out.println("the tail at last is pointing to " + tail.getLast().getTitle());
+        }
     }
-    
+    public void editList(int item)
+    {        
+        Boolean flag = true;
+        Event e = searchList(currentYear);
+        System.out.println("THe currentYear is: " + currentYear);
+        while(flag)
+        { //Search through the event list to match first the index, then the title
+            if(e.getIndex() == currentYear)
+            {
+                System.out.println("Index matches");
+                if(e.getTitle().equals( tabBox.getTitleAt(tabBox.getSelectedIndex()) ) )
+                { //update the list
+                   System.out.println("We found the correct event to update: " + e.getTitle());
+                   switch(item)
+                   {
+                       case 1: 
+                           e.setTitle(searchGuiList(tabBox.getSelectedIndex()).getTitle().getText());
+                       case 2:
+                           e.setInfo(searchGuiList(tabBox.getSelectedIndex()).getInfoBox().getText());
+                   }    
+                   flag = false;
+                }    
+            }
+            else
+            { //if we parse an event that does not have the right index, leave
+               System.out.println("List was not updated"); 
+               flag=false;
+            }
+            e = e.getNext();
+        }
+    }
     private void buildTabs(String title, String info, BufferedImage img)
     {
         
@@ -1456,12 +1551,12 @@ public class Timeline extends javax.swing.JFrame
             {
                 if(currentEvent.getIndex() == index) 
                 {
-                    System.out.println("checking index " + currentEvent.getIndex() );
+                    //System.out.println("checking index " + currentEvent.getIndex() );
                     return currentEvent;
                 }
                 else 
                 {
-                    System.out.println( "Moving on to index: " + currentEvent.getNext().getIndex() );
+                    //System.out.println( "Moving on to index: " + currentEvent.getNext().getIndex() );
                     currentEvent = currentEvent.getNext();
                 }
             }  while( !( currentEvent.equals(guiHead) ) );
