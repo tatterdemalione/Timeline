@@ -16,6 +16,8 @@
   **********************************************************************************************************************************************************************/
 package Timeline;
 
+package timeline;
+
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -765,7 +767,10 @@ public class Timeline extends javax.swing.JFrame
                         {// if the title also matches
                             flag = false; //break out of the loop
                         }
-                    }    
+                        else
+                        {        
+                            bw.write(currentLine+"\n"); //if the title does not match add that title to the file and keep searching
+                    }   } 
                 }
 
                 bw.write(currentLine + "\n"); //write the title
@@ -773,16 +778,38 @@ public class Timeline extends javax.swing.JFrame
                 br.readLine(); //skip over the line with the photo
 
                 bw.write(imgName + "\n"); //write the image name to the temp file
-
-                searchList(currentYear).setImage(img);
-
-                 while ((currentLine = br.readLine()) != null) //read everything after the where the photo was saved and write it to the temp file
-                 {
+                
+                /* Add the image dynamically to the list */
+                flag = true;
+                Event e = searchList(currentYear);
+                System.out.println("THe currentYear is: " + currentYear);
+                while(flag)
+                { //Search through the event list to match first the index, then the title
+                    if(e.getIndex() == currentYear)
+                    {
+                        System.out.println("Index matches");
+                        if(e.getTitle().equals( tabBox.getTitleAt(tabBox.getSelectedIndex()) ) )
+                        { //update the list
+                           System.out.println("We found the correct event to update: " + e.getTitle()); 
+                           flag = false;
+                           e.setImage(img);
+                        }    
+                    }
+                    else
+                    { //if we parse an event that does not have the right index, leave
+                       System.out.println("List was not updated"); 
+                       flag=false;
+                    }
+                    e = e.getNext();
+                }
+                
+                while ((currentLine = br.readLine()) != null) //read everything after the where the photo was saved and write it to the temp file
+                {
                   bw.write(currentLine+"\n");
-                 }
+                }
 
-                 bw.close(); //close the files
-                 br.close();
+                bw.close(); //close the files
+                br.close();
 
                 File oldFile = timelineFile; //make a copy of the old file
                 if (oldFile.delete()) //delete the file, if successful rename the tmp file and make it the usable file
@@ -1398,7 +1425,8 @@ public class Timeline extends javax.swing.JFrame
                            e.setTitle(searchGuiList(tabBox.getSelectedIndex()).getTitle().getText());
                        case 2:
                            e.setInfo(searchGuiList(tabBox.getSelectedIndex()).getInfoBox().getText());
-                   }    
+                   }   
+                        
                    flag = false;
                 }    
             }
