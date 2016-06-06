@@ -14,8 +14,6 @@
   *  You should have received a copy of the GNU General Public License
   *  along with Timeline.  If not, see <http://www.gnu.org/licenses/>.
   **********************************************************************************************************************************************************************/
-package Timeline;
-
 package timeline;
 
 import java.awt.Image;
@@ -227,7 +225,9 @@ public class Timeline extends javax.swing.JFrame
             }
         });
 
-        addTab.setText("[ + ]");
+        addTab.setText("+");
+        addTab.setFont(addTab.getFont().deriveFont(18.0f));
+        addTab.setBorder(null);
         addTab.setToolTipText("Add a new tab");
         addTab.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -457,7 +457,15 @@ public class Timeline extends javax.swing.JFrame
                 System.out.println("Setting Empty GUI");
                 setEmptyEventGUI();
             }
-        }   
+        }
+        if( (tabBox.getTitleAt(tabBox.getSelectedIndex()).equals("")) )
+        { //If there is no event yet, don't let the user edit the photo
+            editPhoto.setVisible(false);
+        }
+        else
+        {
+            editPhoto.setVisible(true);
+        }        
     }                                     
 
     private void endYearFieldActionPerformed(java.awt.event.ActionEvent evt) {                                             
