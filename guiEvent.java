@@ -5,7 +5,7 @@ package Timeline;
  *
  * @author Tatterdemalione
  */
-public class guiEvent 
+public class guiEvent
 {
     private javax.swing.JLabel dynamicFrame;
     private javax.swing.JTextField dynamicTitle;
@@ -13,7 +13,6 @@ public class guiEvent
     private int index;
     private guiEvent next;
     private guiEvent last;
-    
     public guiEvent(int index, javax.swing.JLabel dynamicFrame, javax.swing.JTextField dynamicTitle, javax.swing.JTextArea dynamicInfoBox)
     {
         this.index = index;
@@ -21,10 +20,7 @@ public class guiEvent
         this.dynamicInfoBox = dynamicInfoBox;
         this.dynamicTitle = dynamicTitle;
     }
-    
-    
     /* GET METHODS */
-    
     public javax.swing.JLabel getFrame(){
         return dynamicFrame;
     }
@@ -43,10 +39,7 @@ public class guiEvent
     public guiEvent getLast(){
         return last;
     }
-    
-    
     /* SET METHODS */
-    
     public void setNext(guiEvent next){
         this.next = next;
     }
@@ -65,8 +58,4 @@ public class guiEvent
     public void setInfoBox(javax.swing.JTextArea infoBox){
         this.dynamicInfoBox = infoBox;
     }
-    
-    
 }
-
- 
