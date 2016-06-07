@@ -20,73 +20,76 @@
 package Timeline;
 
 import java.awt.image.BufferedImage;
-
-public class Event {
-    
+public class Event 
+{
     private String title;
     private String info;
     private BufferedImage img;
     private int index;
     private Event next;
     private Event last;
-    
-    
-    public Event(int index, String title, String text, BufferedImage img, Event next, Event last)
+    public Event(int index, String title, String text, BufferedImage img)
     {
         this.title=title;
         this.info=text;
         this.img = img;
         this.index = index;
-        this.next = next;
-        this.last = last;  
     }
-    
     /* GET METHODS */
-    
-    public int getIndex(){
+    public int getIndex()
+    {
         return index;
     }
-    public String getTitle(){
+    public String getTitle()
+    {
         return title;
     }
-    public String getInfo(){
+    public String getInfo()
+    {
         return info;
     }
-    public BufferedImage getImage(){
+    public BufferedImage getImage()
+    {
         return img;
     }
-    public Event getNext(){
+    public Event getNext()
+    {
         return next;
     }
-    public Event getLast(){
+    public Event getLast()
+    {
         return last;
     }
-    public void printAll(){
+    public void printAll()
+    {
         System.out.println("Index:" + this.index);
         System.out.println("Title:" + this.title);
         System.out.println("Info:" + this.info);
         System.out.println("Image:" + this.img);
     }
-    
-    
     /* SET METHODS */
-    
-    public void setIndex(int index){
+    public void setIndex(int index)
+    {
         this.index = index;
     }
-    public void setTitle(String title){
+    public void setTitle(String title)
+    {
         this.title = title;
     }
-    public void setInfo(String info){
+    public void setInfo(String info)
+    {
         this.info=info;
     }
-    public void setImage(BufferedImage img){
+    public void setImage(BufferedImage img)
+    {
         this.img = img;
     }
-    public void setNext(Event next){
+    public void setNext(Event next)
+    {
         this.next = next;
     }
-    public void setLast(Event last){
+    public void setLast(Event last)
+    {
         this.last = last;
     }
 }
