@@ -16,6 +16,7 @@
   **********************************************************************************************************************************************************************/
 package Timeline;
 
+import java.awt.Color;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -23,7 +24,6 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
 
 
 public class Timeline extends javax.swing.JFrame 
@@ -76,7 +76,9 @@ public class Timeline extends javax.swing.JFrame
         tabBox.setVisible(false);
         addTab.setVisible(false);
         
-        
+        Color c = new Color(225, 171, 117);
+        this.getContentPane().setBackground(c);
+       
 }       
     
 
@@ -282,7 +284,7 @@ public class Timeline extends javax.swing.JFrame
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(errMsg)
                             .addComponent(submitButton)))
-                    .addComponent(tabBox, javax.swing.GroupLayout.PREFERRED_SIZE, 1110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tabBox, javax.swing.GroupLayout.PREFERRED_SIZE, 1160, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(Timeline, javax.swing.GroupLayout.PREFERRED_SIZE, 1100, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
@@ -457,6 +459,7 @@ public class Timeline extends javax.swing.JFrame
                 System.out.println("Setting Empty GUI");
                 setEmptyEventGUI();
             }
+            colourTabs();
         }
         if( (tabBox.getTitleAt(tabBox.getSelectedIndex()).equals("")) )
         { //If there is no event yet, don't let the user edit the photo
@@ -675,9 +678,14 @@ public class Timeline extends javax.swing.JFrame
         tabBox.addTab("", tabInterface1); //add a tab
         System.out.println("there are now " + tabBox.getTabCount() + " tabs");
         tabBox.setSelectedIndex(tabBox.getTabCount()-1); //set the currently selected tab to the newly added one
+        
+        Color c = new Color(170, 129, 84);
+        tabBox.getComponentAt(tabBox.getSelectedIndex()).setBackground(c);
+        
         guiEvent currentTab = new guiEvent(tabBox.getSelectedIndex(), frame1, title1, infoBox1); //make an instance of a tabbed gui Event
         System.out.println();
         addToGuiList(currentTab); //add the guiEvent to the list
+        editPhoto.setVisible(false);
     }                                      
 /*********************************************************************************************************************************************************************/
 /*********************************************************************************************************************************************************************/
@@ -1514,6 +1522,8 @@ public class Timeline extends javax.swing.JFrame
             frame1.setIcon(new ImageIcon(img));
            }
         }
+    
+        
         System.out.println("Added Tab " + tabBox.getTitleAt((tabBox.getTabCount()-1)) + " at index " + (tabBox.getTabCount()-1) + " to the GUI." );
         guiEvent currentTab = new guiEvent(tabBox.getTabCount()-1, frame1, title1, infoBox1); //make an instance of a tabbed gui Event
         addToGuiList(currentTab); //add the guiEvent to the list
@@ -1675,6 +1685,16 @@ public class Timeline extends javax.swing.JFrame
         }
         System.out.println("The tabHead is pointing to " + guiHead.getTitle().getText());
         System.out.println("The tabTail is pointing to " + guiTail.getTitle().getText());
+    }
+    public void colourTabs()
+    {     
+        for(int i=0;i<tabBox.getTabCount();i++)
+        {    
+            Color c = new Color(170, 129, 84);
+            Color c2 = new Color(225, 171, 117);
+            tabBox.getComponentAt(i).setBackground(c);
+            tabBox.setBackgroundAt(i, c2);
+        }
     }
 /*********************************************************************************************************************************************************************/
 
