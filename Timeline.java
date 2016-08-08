@@ -24,6 +24,9 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+
 
 
 public class Timeline extends javax.swing.JFrame 
@@ -76,8 +79,13 @@ public class Timeline extends javax.swing.JFrame
         tabBox.setVisible(false);
         addTab.setVisible(false);
         
+        /* Change the background color and size of the prompt screen */
         Color c = new Color(225, 171, 117);
         this.getContentPane().setBackground(c);
+        System.out.println("///////////////////////////"+ this.getBounds());
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setBounds(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2, 513, 114);
+        Timeline.setBackground(c);
        
 }       
     
@@ -1693,7 +1701,6 @@ public class Timeline extends javax.swing.JFrame
             Color c = new Color(170, 129, 84);
             Color c2 = new Color(225, 171, 117);
             tabBox.getComponentAt(i).setBackground(c);
-            tabBox.setBackgroundAt(i, c2);
         }
     }
 /*********************************************************************************************************************************************************************/
